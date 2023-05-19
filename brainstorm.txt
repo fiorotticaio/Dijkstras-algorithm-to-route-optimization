@@ -1,0 +1,3 @@
+[x] Tipo vértice com um id
+[x] Tipo aresta que tem dois vértices, uma distância e um peso
+[x] Tipo grafo que tem todos os vértices
