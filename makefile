@@ -12,7 +12,17 @@ DIR_RESP_3=./saida-esperada/saida100.csv
 
 all: clean compile runAll diffAll # valAll
 
-compile: 
+compile: vertice aresta grafo
+	@ gcc -o trab2 vertice.o aresta.o grafo.o main.c
+
+vertice:
+	@ gcc -c vertice.c
+
+aresta:
+	@ gcc -c aresta.c
+
+grafo:
+	@ gcc -c grafo.c
 
 run1: clean compile
 	@ ./trab2 ${DIR_ENTRADA_1} ${DIR_SAIDA_1}
