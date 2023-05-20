@@ -8,13 +8,18 @@
 
 typedef struct grafo Grafo;
 
+/// @brief Lê um grafo do arquivo de entrada
+/// @param caminhoArquivoEntrada 
+/// @return Grafo gerado a partir do arquivo de entrada
+Grafo* leGrafo(char* caminhoArquivoEntrada);
+
 /// @brief Inicializa um grafo
 /// @param v 
 /// @param a 
 /// @param nVertices 
 /// @param nArestas 
 /// @return Ponteiro para o grafo inicializado
-Grafo* inicializaGrafo(Vertice** v, Aresta** a, int numVertices, int numArestas);
+Grafo* inicializaGrafo(Vertice** v, Aresta** a, int numVertices, int numArestas, int idVerticeOrigem, int idVerticeDestino);
 
 /// @brief Libera a memoria alocada para um grafo
 /// @param g 
