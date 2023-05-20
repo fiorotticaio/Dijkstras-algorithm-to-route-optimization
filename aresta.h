@@ -7,13 +7,19 @@
 
 typedef struct aresta Aresta;
 
+/// @brief Calcula o peso de uma aresta
+/// @param dist
+/// @param velMedia
+/// @return Peso da aresta
+double calculaPesoAresta(double dist, double velMedia);
+
 /// @brief Inicializa uma aresta
 /// @param vOrigem 
 /// @param vDestino 
 /// @param dist 
-/// @param peso 
+/// @param velMedia 
 /// @return Ponteiro para a aresta inicializada
-Aresta* inicializaAresta(Vertice* vOrigem, Vertice* vDestino, double dist, double peso);
+Aresta* inicializaAresta(Vertice* vOrigem, Vertice* vDestino, double dist, double velMedia);
 
 /// @brief Libera a memoria alocada para uma aresta
 /// @param a 
@@ -38,10 +44,20 @@ Vertice* getVerticeDestinoAresta(Aresta* a);
 /// @return Distância da aresta
 double getDistAresta(Aresta* a);
 
+/// @brief Retorna a velocidade média de uma aresta
+/// @param a 
+/// @return Velocidade média da aresta
+double getVelMediaAresta(Aresta* a);
+
 /// @brief Retorna o peso de uma aresta
 /// @param a 
 /// @return Peso da aresta
 double getPesoAresta(Aresta* a);
+
+/// @brief Define a velocidade média de uma aresta
+/// @param a 
+/// @param velMedia 
+void setVelMediaAresta(Aresta* a, double velMedia);
 
 /// @brief Define o peso de uma aresta
 /// @param a 
