@@ -36,13 +36,13 @@ run3: clean compile
 runAll: run1 run2 run3
 
 val1: clean compile
-	@ valgrentradad --leak-check=full ./trab2 ${DIR_ENTRADA_1} ${DIR_SAIDA_1}
+	@ valgrind --leak-check=full ./trab2 ${DIR_ENTRADA_1} ${DIR_SAIDA_1}
 
 val2: clean compile
-	@ valgrentradad --leak-check=full ./trab2 ${DIR_ENTRADA_2} ${DIR_SAIDA_2}
+	@ valgrind --leak-check=full ./trab2 ${DIR_ENTRADA_2} ${DIR_SAIDA_2}
 
 val3: clean compile
-	@ valgrentradad --leak-check=full ./trab2 ${DIR_ENTRADA_3} ${DIR_SAIDA_3}
+	@ valgrind --leak-check=full ./trab2 ${DIR_ENTRADA_3} ${DIR_SAIDA_3}
 
 valAll: val1 val2 val3
 
