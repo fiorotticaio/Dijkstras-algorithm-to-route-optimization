@@ -1,3 +1,4 @@
 [x] Tipo vértice com um id
 [x] Tipo aresta que tem dois vértices, uma distância e um peso
 [x] Tipo grafo que tem todos os vértices
+[x] Peso da aresta é o tempo gasto para trafegá-la
