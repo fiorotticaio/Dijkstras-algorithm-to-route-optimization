@@ -11,7 +11,7 @@ struct grafo {
 
 /* Função auxiliar da leitura do grafa, que verifica se um vértice já foi lido */
 static int verticeJaExiste(Vertice** v, int idVertice) {
-  if (v[idVertice] == NULL) return 0;
+  if (v[idVertice-1] == NULL) return 0; // -1 porque os id's dos vértices vão de 1 a N, e não de 0 a N-1
   return 1;
   /*
     Podemos fazer isso pois todos os ponteiros
@@ -50,16 +50,17 @@ Grafo* leGrafo(char* caminhoArquivoEntrada) {
 
     if (!verticeJaExiste(vertices, idVerticeOrigemAresta)) {
       vOrigem = inicializaVertice(idVerticeOrigemAresta); // Criando novo vértice
-      vertices[idVerticeOrigemAresta] = vOrigem; // Adicionando o vértice no vetor de vértices
+      vertices[idVerticeOrigemAresta-1] = vOrigem; // Adicionando o vértice no vetor de vértices
+      /* -1 porque os id's dos vértices vão de 1 a N, e não de 0 a N-1 */
     } else {
-      vOrigem = vertices[idVerticeOrigemAresta]; // Pegando o vértice já existente
+      vOrigem = vertices[idVerticeOrigemAresta-1]; // Pegando o vértice já existente
     } 
 
     if (!verticeJaExiste(vertices, idVerticeDestinoAresta)) {
       vDestino = inicializaVertice(idVerticeDestinoAresta); // Criando novo vértice
-      vertices[idVerticeDestinoAresta] = vDestino; // Adicionando o vértice no vetor de vértices
+      vertices[idVerticeDestinoAresta-1] = vDestino; // Adicionando o vértice no vetor de vértices
     } else {
-      vDestino = vertices[idVerticeDestinoAresta]; // Pegando o vértice já existente
+      vDestino = vertices[idVerticeDestinoAresta-1]; // Pegando o vértice já existente
     }
 
     Aresta* a = inicializaAresta(vOrigem, vDestino, dist, velMedia);
