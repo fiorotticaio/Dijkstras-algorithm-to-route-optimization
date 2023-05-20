@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include "vertice.h"
+#include "aresta.h"
+#include "grafo.h"
 
 int main(int argc, char** argv) {
   /**
@@ -12,6 +15,20 @@ int main(int argc, char** argv) {
     printf("Use: ./trab2 <nome_arquivo_entrada> <nome_arquivo_saida>\n");
     return 1; 
   }
-  
+
+  /*============ Leitura dos dados de entrada ============*/
+  Grafo* grafo = leGrafo(argv[1]);
+  imprimeGrafo(grafo); // Debug
+
+
+  /*============ Aplicação do algoritmo de Dijkstra ============*/
+
+
+
+
+
+  /*============ Liberação de memória ============*/
+  destroiGrafo(grafo);
+
   return 0;
 }
