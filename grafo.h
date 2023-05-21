@@ -9,9 +9,9 @@
 typedef struct grafo Grafo;
 
 /// @brief Lê um grafo do arquivo de entrada
-/// @param caminhoArquivoEntrada 
+/// @param arquivoEntrada 
 /// @return Grafo gerado a partir do arquivo de entrada
-Grafo* leGrafo(char* caminhoArquivoEntrada);
+Grafo* leGrafo(FILE* arquivoEntrada);
 
 /// @brief Inicializa um grafo
 /// @param v 

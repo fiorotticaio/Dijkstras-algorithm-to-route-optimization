@@ -17,7 +17,13 @@ int main(int argc, char** argv) {
   }
 
   /*============ Leitura dos dados de entrada ============*/
-  Grafo* grafo = leGrafo(argv[1]);
+  FILE* arquivoEntrada = fopen(argv[1], "r");
+  if (!arquivoEntrada) {
+    printf("Erro ao abrir arquivo de entrada em %s\n", argv[1]);
+    exit(1);
+  }
+
+  Grafo* grafo = leGrafo(arquivoEntrada);
   imprimeGrafo(grafo); // Debug
 
 
@@ -28,6 +34,7 @@ int main(int argc, char** argv) {
 
 
   /*============ Liberação de memória ============*/
+  fclose(arquivoEntrada);
   destroiGrafo(grafo);
 
   return 0;

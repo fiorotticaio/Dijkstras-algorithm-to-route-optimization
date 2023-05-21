@@ -19,13 +19,7 @@ static int verticeJaExiste(Vertice** v, int idVertice) {
   */
 }
 
-Grafo* leGrafo(char* caminhoArquivoEntrada) {
-  FILE* arquivoEntrada = fopen(caminhoArquivoEntrada, "r");
-  if (!arquivoEntrada) {
-    printf("Erro ao abrir arquivo de entrada em %s\n", caminhoArquivoEntrada);
-    exit(1);
-  }
-
+Grafo* leGrafo(FILE* arquivoEntrada) {
   int numVertices = 0, numArestas = 0, idVerticeOrigem = 0, idVerticeDestino = 0;
   fscanf(arquivoEntrada, "%d;%d", &numVertices, &numArestas);
   fscanf(arquivoEntrada, "%d;%d", &idVerticeOrigem, &idVerticeDestino);
@@ -68,8 +62,7 @@ Grafo* leGrafo(char* caminhoArquivoEntrada) {
     /* Adicionando a aresta no vetor, conforme elas aparecem no arquivo */
     arestas[i] = a;
   }
-
-  fclose(arquivoEntrada);
+  
   return inicializaGrafo(vertices, arestas, numVertices, numArestas, idVerticeOrigem, idVerticeDestino);
 }
 
