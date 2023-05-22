@@ -28,10 +28,8 @@ int main(int argc, char** argv) {
 
 
   /*============ Aplicação do algoritmo de Dijkstra ============*/
-
-
-
-
+  calculaMelhorRotaGrafo(grafo, arquivoEntrada);
+  
 
   /*============ Liberação de memória ============*/
   fclose(arquivoEntrada);
