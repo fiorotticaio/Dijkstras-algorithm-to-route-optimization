@@ -2,6 +2,7 @@
 
 struct vertice {
   int id;
+  // Talvez colocar alguma coisa relacionada ao tempo aqui
 };
 
 Vertice* inicializaVertice(int id) {
