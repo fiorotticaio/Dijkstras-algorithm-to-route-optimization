@@ -45,6 +45,9 @@ double getVelMediaAresta(Aresta* a) { return a->velMedia; }
 
 double getPesoAresta(Aresta* a) { return a->peso; }
 
-void setVelMediaAresta(Aresta* a, double velMedia) { a->velMedia = velMedia; }
+void setVelMediaAresta(Aresta* a, double velMedia) { 
+  a->velMedia = velMedia;
+  a->peso = calculaPesoAresta(a->dist, velMedia); // Atualiza o peso com o novo valor de velocidade
+}
 
 void setPesoAresta(Aresta* a, double peso) { a->peso = peso; }

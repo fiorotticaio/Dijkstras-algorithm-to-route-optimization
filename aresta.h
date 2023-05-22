@@ -64,4 +64,4 @@ void setVelMediaAresta(Aresta* a, double velMedia);
 /// @param peso 
 void setPesoAresta(Aresta* a, double peso);
 
-#endif // !ARESTA_H
+#endif // ARESTA_H
