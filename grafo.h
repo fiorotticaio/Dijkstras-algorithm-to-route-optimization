@@ -6,12 +6,32 @@
 #include "vertice.h"
 #include "aresta.h"
 
+#define INFINITY 999999
+#define UNDEFINED -1
+
 typedef struct grafo Grafo;
 
 /// @brief Lê um grafo do arquivo de entrada
 /// @param arquivoEntrada 
 /// @return Grafo gerado a partir do arquivo de entrada
 Grafo* leGrafo(FILE* arquivoEntrada);
+
+/// @brief Calcula a melhor rota de um grafo
+/// @param grafo 
+/// @param arquivoEntrada 
+void calculaMelhorRotaGrafo(Grafo* grafo, FILE* arquivoEntrada);
+
+/// @brief Verifica se o grafo chegou ao destino
+/// @param grafo 
+/// @return 1 se chegou ao destino, 0 caso contrário
+int chegouAoDestino(Grafo* grafo);
+
+/// @brief Recalcula os pesos de um grafo
+/// @param grafo 
+/// @param idVerticeOrigem 
+/// @param idVerticeDestino 
+/// @param velMedia 
+void recalculaPesosGrafo(Grafo* grafo, int idVerticeOrigem, int idVerticeDestino, double velMedia);
 
 /// @brief Inicializa um grafo
 /// @param v 
@@ -59,4 +79,4 @@ void setNumVerticesGrafo(Grafo* g, int numVertices);
 /// @param numArestas 
 void setNumArestasGrafo(Grafo* g, int numArestas);
 
-#endif // !GRAFO_H
+#endif // GRAFO_H

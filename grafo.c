@@ -66,6 +66,43 @@ Grafo* leGrafo(FILE* arquivoEntrada) {
   return inicializaGrafo(vertices, arestas, numVertices, numArestas, idVerticeOrigem, idVerticeDestino);
 }
 
+void calculaMelhorRotaGrafo(Grafo* grafo, FILE* arquivoEntrada) {
+  int tempoDePercurso = 0;
+  int idVerticeOrigem = 0, idVerticeDestino = 0, instanteDeTempo = 0;
+  double velMedia = 0.0; // Nova velocidade média de uma aresta
+
+  // tempoDePercurso = aplicaAlgoritmoDijkstra(tempoDePercurso);
+
+  while (!chegouAoDestino(grafo)) {
+    if (!feof(arquivoEntrada)) {
+      fscanf(arquivoEntrada, "%d;%d;%d;%lf", &instanteDeTempo, &idVerticeOrigem, &idVerticeDestino, &velMedia);
+    }
+
+    // tempoDePercurso = aplicaAlgoritmoDijkstra(tempoDePercurso);
+    if (tempoDePercurso > instanteDeTempo) {
+      recalculaPesosGrafo(grafo, idVerticeOrigem, idVerticeDestino, velMedia); // Recalcula os pesos das arestas do grafo
+    }
+  }
+}
+
+// TODO: implementar essa função
+int chegouAoDestino(Grafo* grafo) {
+
+}
+
+void recalculaPesosGrafo(Grafo* grafo, int idVerticeOrigem, int idVerticeDestino, double velMedia) {
+  int i = 0;
+  for (i = 0; i < grafo->numArestas; i++) { // Encontrar a aresta a ser atualizada
+    Aresta* a = grafo->arestas[i];
+    if (
+        getIdVertice(getVerticeOrigemAresta(a)) == idVerticeOrigem && 
+        getIdVertice(getVerticeDestinoAresta(a)) == idVerticeDestino
+    ) {
+      setVelMediaAresta(a, velMedia); // Atualiza a velocidade média da aresta 
+    }
+  }
+}
+
 Grafo *inicializaGrafo(
   Vertice** v,
   Aresta** a,
