@@ -1,3 +1,5 @@
+// TODO: Ajustar para o nosso caso
+
 #ifndef PQ_H
 #define PQ_H
 
