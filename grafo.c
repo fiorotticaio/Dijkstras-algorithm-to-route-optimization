@@ -7,6 +7,9 @@ struct grafo {
   int numArestas;
   int idVerticeOrigem;
   int idVerticeDestino;
+  double tempoPercorrido;
+  double distanciaPercorrida;
+  int* idVerticesPercorridos;
 };
 
 /* Função auxiliar da leitura do grafa, que verifica se um vértice já foi lido */
@@ -67,22 +70,53 @@ Grafo* leGrafo(FILE* arquivoEntrada) {
 }
 
 void calculaMelhorRotaGrafo(Grafo* grafo, FILE* arquivoEntrada) {
-  int tempoDePercurso = 0;
   int idVerticeOrigem = 0, idVerticeDestino = 0, instanteDeTempo = 0;
   double velMedia = 0.0; // Nova velocidade média de uma aresta
 
-  // tempoDePercurso = aplicaAlgoritmoDijkstra(tempoDePercurso);
+  // aplicaAlgoritmoDijkstra(grafo);
 
   while (!chegouAoDestino(grafo)) {
     if (!feof(arquivoEntrada)) {
       fscanf(arquivoEntrada, "%d;%d;%d;%lf", &instanteDeTempo, &idVerticeOrigem, &idVerticeDestino, &velMedia);
     }
 
-    // tempoDePercurso = aplicaAlgoritmoDijkstra(tempoDePercurso);
-    if (tempoDePercurso > instanteDeTempo) {
+    // aplicaAlgoritmoDijkstra(grafo);
+    if (grafo->tempoPercorrido > instanteDeTempo) {
       recalculaPesosGrafo(grafo, idVerticeOrigem, idVerticeDestino, velMedia); // Recalcula os pesos das arestas do grafo
     }
   }
+}
+
+// TODO: implementar essa função
+void aplicaAlgoritmoDijkstra(Grafo* grafo) {
+  /*
+    dist[source] ← 0  // Initialization
+    create vertex priority queue Q
+
+    for each vertex v in Graph.Vertices:
+      if v ≠ source
+        dist[v] ← INFINITY // Unknown distance from source to v
+        prev[v] ← UNDEFINED // Predecessor of v
+
+      Q.add_with_priority(v, dist[v])
+
+    while Q is not empty: // The main loop
+      u ← Q.extract_min() // Remove and return best vertex
+      for each neighbor v of u: // Go through all v neighbors of u
+        alt ← dist[u] + Graph.Edges(u, v)
+        if alt < dist[v]:
+          dist[v] ← alt
+          prev[v] ← u
+          Q.decrease_priority(v, alt)
+  */
+
+  /*
+    Depois disso a função deve dar um passo para frente,ou seja, 
+    trocar o vértice de origem do grafo para o próximo vértice do algoritmo.
+    Depois disso ele deve adicionar o tempo q gastou com esse passo no campo tempoPercorrido,
+    adicionar a distância percorrida no campo distanciaPercorrida e adicionar o id do vértice percorrido
+    no campo de idVerticesPercorridos.
+  */
 }
 
 // TODO: implementar essa função
@@ -118,6 +152,9 @@ Grafo *inicializaGrafo(
   g->numArestas = numArestas;
   g->idVerticeOrigem = idVerticeOrigem;
   g->idVerticeDestino = idVerticeDestino;
+  g->tempoPercorrido = 0.0;
+  g->distanciaPercorrida = 0.0;
+  g->idVerticesPercorridos = (int*) calloc(numVertices, sizeof(int)); // Começa alocando com o número máximo de vértices
   return g;
 }
 
@@ -131,6 +168,7 @@ void destroiGrafo(Grafo *g) {
     destroiAresta(g->arestas[i]);
   }
   free(g->arestas);
+  free(g->idVerticesPercorridos);
   free(g); 
 }
 

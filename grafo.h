@@ -21,6 +21,9 @@ Grafo* leGrafo(FILE* arquivoEntrada);
 /// @param arquivoEntrada 
 void calculaMelhorRotaGrafo(Grafo* grafo, FILE* arquivoEntrada);
 
+// TODO: comentar
+void aplicaAlgoritmoDijkstra(Grafo* grafo);
+
 /// @brief Verifica se o grafo chegou ao destino
 /// @param grafo 
 /// @return 1 se chegou ao destino, 0 caso contrário
