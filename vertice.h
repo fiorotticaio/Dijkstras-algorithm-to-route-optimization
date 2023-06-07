@@ -7,8 +7,8 @@
 typedef struct vertice Vertice;
 
 /*========= Macros =========*/
-#define id(v) (v->id) // FIXME: ou (v->id)-1
-#define more(v, w) (v->id > w->id)
+#define id(v) (getIdVertice(v)) // FIXME: ou (v->id)-1
+#define more(v, w) (getIdVertice(v) > getIdVertice(w))
 
 /// @brief Inicializa um vertice
 /// @param id 
