@@ -15,6 +15,8 @@ typedef struct vertice Vertice;
 /// @return Ponteiro para o vertice inicializado
 Vertice* inicializaVertice(int id);
 
+void adicionaVerticeVizinho(Vertice* v, Vertice* vizinho);
+
 /// @brief Libera a memoria alocada para um vertice
 /// @param v 
 void destroiVertice(Vertice* v);
