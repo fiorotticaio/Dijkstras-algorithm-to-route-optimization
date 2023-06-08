@@ -1,5 +1,3 @@
-// TODO: Ajustar para o nosso caso
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "PQ.h"

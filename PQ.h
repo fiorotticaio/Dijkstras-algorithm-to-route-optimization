@@ -1,10 +1,8 @@
-// TODO: Ajustar para o nosso caso
-
 #ifndef PQ_H
 #define PQ_H
 
 #include <stdbool.h>
-#include <vertice.h>
+#include "vertice.h"
 
 typedef struct pq Pq;
 
