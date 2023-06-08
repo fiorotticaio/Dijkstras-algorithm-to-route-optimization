@@ -42,7 +42,7 @@ void recalculaPesosGrafo(Grafo* grafo, int idVerticeOrigem, int idVerticeDestino
 /// @param nVertices 
 /// @param nArestas 
 /// @return Ponteiro para o grafo inicializado
-Grafo* inicializaGrafo(Vertice** v, Aresta** a, int numVertices, int numArestas, int idVerticeOrigem, int idVerticeDestino, int matriz[numVertices][numVertices]);
+Grafo* inicializaGrafo(Vertice** v, Aresta** a, int numVertices, int numArestas, int idVerticeOrigem, int idVerticeDestino, double matriz[numVertices][numVertices]);
 
 /// @brief Libera a memoria alocada para um grafo
 /// @param g 

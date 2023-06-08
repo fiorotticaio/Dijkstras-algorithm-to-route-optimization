@@ -10,7 +10,7 @@ struct grafo {
   double tempoPercorrido;
   double distanciaPercorrida;
   int* idVerticesPercorridos;
-  int** valores;
+  double** valores;
 };
 
 /* Função auxiliar da leitura do grafa, que verifica se um vértice já foi lido */
@@ -37,7 +37,12 @@ Grafo* leGrafo(FILE* arquivoEntrada) {
   /* Criando o vetor de arestas */
   Aresta** arestas = (Aresta**) calloc(numArestas, sizeof(Aresta*));
 
-  int matriz[numVertices][numVertices];
+  double matriz[numVertices][numVertices];
+  for(int j=0;j<numVertices;j++) {
+    for(int k=0;k<numVertices;k++) {
+      matriz[j][k]=0;
+    }
+  }
 
   int i = 0;
   for (i = 0; i < numArestas; i++) {
@@ -76,11 +81,7 @@ Grafo* leGrafo(FILE* arquivoEntrada) {
     //======================================================================================//
 
   
-    for(int j=0;j<numVertices;j++) {
-      for(int k=0;k<numVertices;k++) {
-        matriz[j][k]=0;
-      }
-    }
+    
     
     if(idVerticeOrigemAresta>idVerticeDestinoAresta) {
       matriz[idVerticeDestinoAresta-1][idVerticeOrigemAresta-1]=dist;
@@ -165,6 +166,13 @@ void recalculaPesosGrafo(Grafo* grafo, int idVerticeOrigem, int idVerticeDestino
       setVelMediaAresta(a, velMedia); // Atualiza a velocidade média da aresta 
     }
   }
+
+  if(idVerticeOrigem>idVerticeDestino) {
+    grafo->valores[idVerticeOrigem-1][idVerticeDestino-1]=velMedia;
+  }
+  else {
+    grafo->valores[idVerticeDestino-1][idVerticeOrigem-1]=velMedia;
+  }
 }
 
 Grafo *inicializaGrafo(
@@ -174,7 +182,7 @@ Grafo *inicializaGrafo(
   int numArestas,
   int idVerticeOrigem,
   int idVerticeDestino,
-  int matriz[numVertices][numVertices]
+  double matriz[numVertices][numVertices]
 ) {
   Grafo* g = (Grafo*) malloc(sizeof(Grafo));
   g->vertices = v;
@@ -187,9 +195,9 @@ Grafo *inicializaGrafo(
   g->distanciaPercorrida = 0.0;
   g->idVerticesPercorridos = (int*) calloc(numVertices, sizeof(int)); // Começa alocando com o número máximo de vértices
   
-  g->valores = malloc(numVertices*sizeof(int*));
+  g->valores = malloc(numVertices*sizeof(double*));
   for(int i=0;i<numVertices;i++) {
-    g->valores[i]=malloc(numVertices*sizeof(int));
+    g->valores[i]=malloc(numVertices*sizeof(double));
   }
   for(int i=0;i<numVertices;i++) {
     for(int j=0;j<numVertices;j++) {
@@ -209,21 +217,31 @@ void destroiGrafo(Grafo *g) {
   for (i = 0; i < g->numArestas; i++) {
     destroiAresta(g->arestas[i]);
   }
+  for(i=0;i<g->numVertices;i++) {
+    free(g->valores[i]);
+  }
+  free(g->valores);
   free(g->arestas);
   free(g->idVerticesPercorridos);
   free(g); 
 }
 
 void imprimeGrafo(Grafo *g) {
-  printf("Grafo com %d vertices e %d arestas\n", g->numVertices, g->numArestas);
-  printf("-----------------\n");
-  int i = 0;
-  for (i = 0; i < g->numVertices; i++) {
-    imprimeVertice(g->vertices[i]);
-  }
-  printf("-----------------\n");
-  for (i = 0; i < g->numArestas; i++) {
-    imprimeAresta(g->arestas[i]);
+  // printf("Grafo com %d vertices e %d arestas\n", g->numVertices, g->numArestas);
+  // printf("-----------------\n");
+  // int i = 0;
+  // for (i = 0; i < g->numVertices; i++) {
+  //   imprimeVertice(g->vertices[i]);
+  // }
+  // printf("-----------------\n");
+  // for (i = 0; i < g->numArestas; i++) {
+  //   imprimeAresta(g->arestas[i]);
+  // }
+  for(int i=0;i<g->numVertices;i++) {
+    for(int j=0;j<g->numVertices;j++) {
+      printf("%.2lf ", g->valores[i][j]);
+    }
+    printf("\n");
   }
 }
 
