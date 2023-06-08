@@ -1,11 +1,14 @@
+DIR_ENTRADA_0=./entrada/entrada7.csv
 DIR_ENTRADA_1=./entrada/entrada10.csv
 DIR_ENTRADA_2=./entrada/entrada50.csv
 DIR_ENTRADA_3=./entrada/entrada100.csv
 
+DIR_SAIDA_0=./saida/saida7.csv
 DIR_SAIDA_1=./saida/saida10.csv
 DIR_SAIDA_2=./saida/saida50.csv
 DIR_SAIDA_3=./saida/saida100.csv
 
+DIR_RESP_0=./saida-esperada/saida7.csv
 DIR_RESP_1=./saida-esperada/saida10.csv
 DIR_RESP_2=./saida-esperada/saida50.csv
 DIR_RESP_3=./saida-esperada/saida100.csv
@@ -24,6 +27,9 @@ aresta:
 grafo:
 	@ gcc -c grafo.c
 
+run0: clean compile
+	@ ./trab2 ${DIR_ENTRADA_0} ${DIR_SAIDA_0}
+
 run1: clean compile
 	@ ./trab2 ${DIR_ENTRADA_1} ${DIR_SAIDA_1}
 
@@ -34,6 +40,9 @@ run3: clean compile
 	@ ./trab2 ${DIR_ENTRADA_3} ${DIR_SAIDA_3}
 
 runAll: run1 run2 run3
+
+val0: clean compile
+	@ valgrind --leak-check=full ./trab2 ${DIR_ENTRADA_0} ${DIR_SAIDA_0}
 
 val1: clean compile
 	@ valgrind --leak-check=full ./trab2 ${DIR_ENTRADA_1} ${DIR_SAIDA_1}
