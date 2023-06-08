@@ -15,14 +15,17 @@ DIR_RESP_3=./saida-esperada/saida100.csv
 
 all: clean compile runAll diffAll # valAll
 
-compile: vertice aresta grafo
-	@ gcc -o trab2 vertice.o aresta.o grafo.o main.c
+compile: vertice aresta PQ grafo
+	@ gcc -o trab2 vertice.o aresta.o PQ.o grafo.o main.c
 
 vertice:
 	@ gcc -c vertice.c
 
 aresta:
 	@ gcc -c aresta.c
+
+PQ:
+	@ gcc -c PQ.c
 
 grafo:
 	@ gcc -c grafo.c

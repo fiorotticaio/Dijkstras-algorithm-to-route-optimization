@@ -1,33 +1,25 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "PQ.h"
 
-struct pq{
-    Vertice **itens;
-    int *map;
+struct pq_st {
+    Item* pq;
+    int* map;
     int N;
-    int MaxN;
 };
 
-static void swap(Pq* p, int i, int j) {
-    Vertice* temp;
-    temp = p->itens[i];
-    p->itens[i] = p->itens[j];
-    p->itens[j] = temp;
-    p->map[getIdVertice(p->itens[i])] = i;
-    p->map[getIdVertice(p->itens[j])] = j;
+static void swap(Pq* pQueue, int i, int j) {
+    exch(pQueue->pq[i], pQueue->pq[j]);
+    pQueue->map[id(pQueue->pq[i])] = i;
+    pQueue->map[id(pQueue->pq[j])] = j;
 }
 
-void fix_up(Pq *p, int k) {
-    Vertice ** a = p->map;
+void fix_up(Pq* pQueue, Item* a, int k) {
     while (k > 1 && more(a[k/2], a[k])) {
-        swap(p, k, k/2);
+        swap(pQueue, k, k/2);
         k = k/2;
     }
 }
 
-void fix_down(Pq *p, int sz, int k){
-    Vertice ** a = p->map;
+void fix_down(Pq* pQueue, Item* a, int sz, int k){
     while (2*k <= sz) {
         int j = 2*k;
         if (j < sz && more(a[j], a[j+1])){
@@ -36,63 +28,53 @@ void fix_down(Pq *p, int sz, int k){
         if (!more(a[k], a[j])) {
             break;
         }
-        swap(p, k, j);
+        swap(pQueue, k, j);
         k = j;
   }
 }
 
 Pq* PQ_init(int maxN) {
-    Pq* novo = malloc(sizeof(Pq));
-    novo->itens = (Vertice **) malloc((maxN+1) * sizeof (Vertice*));
-    novo->map = (int *) malloc((maxN+1) * sizeof (int));
-    novo->N = 0;
-    novo->MaxN = maxN;
-
-    return novo;
+    Pq* pQueue = malloc(sizeof(Pq));
+    pQueue->pq = (Item*) malloc((maxN+1) * sizeof (Item));
+    pQueue->map = (int*) malloc((maxN+1) * sizeof (int));
+    pQueue->N = 0;
+    return pQueue;
 }
 
-void PQ_insert(Pq* p,Vertice* new) {
-    if(p->N==p->MaxN){
-        return;
-    }
-    p->N++;
-    p->itens[p->N] = new;
-    p->map[getIdVertice(new)] = p->N;
-    fix_up(p, p->N); //FIX
+void PQ_insert(Pq* pQueue, Item v) {
+    pQueue->N++;
+    pQueue->pq[pQueue->N] = v;
+    pQueue->map[id(v)] = pQueue->N;
+    fix_up(pQueue, pQueue->pq, pQueue->N);
 }
 
-Vertice* PQ_delmin(Pq* p) {
-    Vertice* min = p->itens[1];
-    swap(p, 1, p->N);
-    p->N--;
-    fix_down(p, p->N, 1);
+Item PQ_delmin(Pq* pQueue) {
+    Item min = pQueue->pq[1];
+    swap(pQueue, 1, pQueue->N);
+    pQueue->N--;
+    fix_down(pQueue, pQueue->pq, pQueue->N, 1);
     return min;
 }
 
-Vertice* PQ_min(Pq* p) {
-    return p->itens[1];
+Item PQ_min(Pq* pQueue) {
+    return pQueue->pq[1];
 }
 
-void PQ_decrease_key(Pq* p, int id, double value) {
-    int i = p->map[id];
-    p->map[i] = value;
-    fix_up(p, i);
+void PQ_decrease_key(Pq* pQueue, int id, double value) {
+    int i = pQueue->map[id];
+    pQueue->map[i] = value;
+    fix_up(pQueue, pQueue->pq, i);
 }
 
-bool PQ_empty(Pq* p) {
-    return p->N == 0;
+bool PQ_empty(Pq* pQueue) {
+    return pQueue->N == 0;
 }
 
-int  PQ_size(Pq* p) {
-    return p->N;
+int  PQ_size(Pq* pQueue) {
+    return pQueue->N;
 }
 
-void PQ_finish(Pq* p) {
-    for(int i = p->N;i<0;i--){
-        free(p->itens[i]);
-    }
-    free(p->map);
-    free(p);
+void PQ_finish(Pq* pQueue) {
+    free(pQueue->pq);
+    free(pQueue->map);
 }
-
-

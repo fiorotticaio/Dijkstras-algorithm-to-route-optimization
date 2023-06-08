@@ -19,7 +19,7 @@ double calculaPesoAresta(double dist, double velMedia);
 /// @param dist 
 /// @param velMedia 
 /// @return Ponteiro para a aresta inicializada
-Aresta* inicializaAresta(Vertice* vOrigem, Vertice* vDestino, double dist, double velMedia);
+Aresta* inicializaAresta(int id, Vertice* vOrigem, Vertice* vDestino, double dist, double velMedia);
 
 /// @brief Libera a memoria alocada para uma aresta
 /// @param a 

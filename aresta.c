@@ -1,6 +1,7 @@
 #include "aresta.h"
 
 struct aresta {
+  int id;
   Vertice* vOrigem;
   Vertice* vDestino;
   double dist;
@@ -13,8 +14,9 @@ double calculaPesoAresta(double dist, double velMedia) {
   return (double) (dist / velMedia); 
 }
 
-Aresta *inicializaAresta(Vertice *vOrigem, Vertice *vDestino, double dist, double velMedia) {
+Aresta *inicializaAresta(int id, Vertice *vOrigem, Vertice *vDestino, double dist, double velMedia) {
   Aresta* a = (Aresta*) malloc(sizeof(Aresta));
+  a->id = id;
   a->vOrigem = vOrigem;
   a->vDestino = vDestino;
   a->dist = dist;
@@ -26,7 +28,8 @@ Aresta *inicializaAresta(Vertice *vOrigem, Vertice *vDestino, double dist, doubl
 void destroiAresta(Aresta* a) { free(a); }
 
 void imprimeAresta(Aresta* a) { 
-  printf("Aresta %d -> %d, dist: %.5lf, velMedia: %.5lf, peso: %.5lf\n", 
+  printf("Aresta %d: %d -> %d, dist: %.5lf, velMedia: %.5lf, peso: %.5lf\n", 
+    a->id,
     getIdVertice(a->vOrigem), 
     getIdVertice(a->vDestino),
     a->dist,

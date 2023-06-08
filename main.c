@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
   }
 
   Grafo* grafo = leGrafo(arquivoEntrada);
-  imprimeGrafo(grafo); // Debug
+  // imprimeGrafo(grafo); // Debug
 
 
   /*============ Aplicação do algoritmo de Dijkstra ============*/

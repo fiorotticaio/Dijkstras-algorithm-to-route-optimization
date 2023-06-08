@@ -2,37 +2,41 @@
 
 struct vertice {
   int id;
-  Vertice** vizinhos;
+  int* idArestasVizinhas;
   int numVizinhos;
 };
 
 Vertice* inicializaVertice(int id) {
   Vertice* v = (Vertice*) malloc(sizeof(Vertice));
   v->id = id;
-  v->vizinhos = NULL; // Inicialmente, não tem vizinhos
+  v->idArestasVizinhas = NULL; // Inicialmente, não tem vizinhos
   v->numVizinhos = 0;
   return v;
 }
 
-void adicionaVerticeVizinho(Vertice* v, Vertice* vizinho) {
+void adicionaArestaVizinha(Vertice* v, int idAresta) {
+  v->idArestasVizinhas = (int*) realloc(v->idArestasVizinhas, (v->numVizinhos + 1) * sizeof(int));
+  v->idArestasVizinhas[v->numVizinhos] = idAresta;
   v->numVizinhos++;
-  v->vizinhos = (Vertice**) realloc(v->vizinhos, v->numVizinhos * sizeof(Vertice*));
-  v->vizinhos[v->numVizinhos - 1] = vizinho;
 }
 
 void destroiVertice(Vertice* v) { 
-  free(v->vizinhos);
+  free(v->idArestasVizinhas);
   free(v); 
 }
 
 void imprimeVertice(Vertice* v) { 
-  printf("Vertice %d, ", v->id); 
-  printf("Vizinhos: ");
+  printf("Vertice %d\n", v->id); 
+  printf("Vizinhos (%d): ", v->numVizinhos);
   int i = 0;
   for (i = 0; i < v->numVizinhos; i++) {
-    printf("%d ", getIdVertice(v->vizinhos[i]));
+    printf("%d ", v->idArestasVizinhas[i]);
   }
   printf("\n");  
 }
 
 int getIdVertice(Vertice* v) { return v->id; }
+
+int getNumVizinhosVertice(Vertice* v) { return v->numVizinhos; }
+
+int* getIdArestasVizinhasVertice(Vertice* v) { return v->idArestasVizinhas; }

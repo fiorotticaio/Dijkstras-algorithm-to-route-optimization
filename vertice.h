@@ -6,16 +6,12 @@
 
 typedef struct vertice Vertice;
 
-/*========= Macros =========*/
-#define id(v) (getIdVertice(v)) // FIXME: ou (v->id)-1
-#define more(v, w) (getIdVertice(v) > getIdVertice(w))
-
 /// @brief Inicializa um vertice
 /// @param id 
 /// @return Ponteiro para o vertice inicializado
 Vertice* inicializaVertice(int id);
 
-void adicionaVerticeVizinho(Vertice* v, Vertice* vizinho);
+void adicionaArestaVizinha(Vertice* v, int id);
 
 /// @brief Libera a memoria alocada para um vertice
 /// @param v 
@@ -29,5 +25,9 @@ void imprimeVertice(Vertice* v);
 /// @param v 
 /// @return id do vertice
 int getIdVertice(Vertice* v);
+
+int getNumVizinhosVertice(Vertice* v);
+
+int* getIdArestasVizinhasVertice(Vertice* v);
 
 #endif // VERTICE_H

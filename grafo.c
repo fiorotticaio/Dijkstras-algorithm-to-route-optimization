@@ -60,7 +60,9 @@ Grafo* leGrafo(FILE* arquivoEntrada) {
       vDestino = vertices[idVerticeDestinoAresta-1]; // Pegando o vértice já existente
     }
 
-    Aresta* a = inicializaAresta(vOrigem, vDestino, dist, velMedia);
+    Aresta* a = inicializaAresta(i, vOrigem, vDestino, dist, velMedia);
+
+    adicionaArestaVizinha(vOrigem, i); // Adicionando o id da aresta no vetor de arestas vizinhas do vértice de origem
 
     /* Adicionando a aresta no vetor, conforme elas aparecem no arquivo */
     arestas[i] = a;
@@ -73,42 +75,73 @@ void calculaMelhorRotaGrafo(Grafo* grafo, FILE* arquivoEntrada) {
   int idVerticeOrigem = 0, idVerticeDestino = 0, instanteDeTempo = 0;
   double velMedia = 0.0; // Nova velocidade média de uma aresta
 
-  // aplicaAlgoritmoDijkstra(grafo);
+  /* Variáveis que vão guardar o resultado */
+  double dist[grafo->numVertices]; // Peso (tempo) da distancia da origem até o vértice
+  int prev[grafo->numVertices]; // Guarda o id dos vértices anteriores
+
+  aplicaAlgoritmoDijkstra(grafo, dist, prev);
+  exit(0);
 
   while (!chegouAoDestino(grafo)) {
     if (!feof(arquivoEntrada)) {
       fscanf(arquivoEntrada, "%d;%d;%d;%lf", &instanteDeTempo, &idVerticeOrigem, &idVerticeDestino, &velMedia);
     }
 
-    // aplicaAlgoritmoDijkstra(grafo);
+    aplicaAlgoritmoDijkstra(grafo, dist, prev);
     if (grafo->tempoPercorrido > instanteDeTempo) {
       recalculaPesosGrafo(grafo, idVerticeOrigem, idVerticeDestino, velMedia); // Recalcula os pesos das arestas do grafo
     }
   }
 }
 
-// TODO: implementar essa função
-void aplicaAlgoritmoDijkstra(Grafo* grafo) {
-  /*
-    dist[source] ← 0  // Initialization
-    create vertex priority queue Q
+static Item makeItem(Vertice* v, double value) {
+  Item item;
+  id(item) = getIdVertice(v);
+  value(item) = value;
+  return item;
+}
 
-    for each vertex v in Graph.Vertices:
-      if v ≠ source
-        dist[v] ← INFINITY // Unknown distance from source to v
-        prev[v] ← UNDEFINED // Predecessor of v
+void aplicaAlgoritmoDijkstra(Grafo* grafo, double* dist, int* prev) {
+  Pq* pq = PQ_init(grafo->numVertices); // Inicializa a fila de prioridade
 
-      Q.add_with_priority(v, dist[v])
+  int i = 0;
+  for (i = 0; i < grafo->numVertices; i++) {
+    dist[i] = INFINITY; // Distância da origem até o vértice é infinito
+    prev[i] = UNDEFINED; // Vértice anterior não existe
+    PQ_insert(pq, makeItem(grafo->vertices[i], dist[i])); // Insere o vértice na fila de prioridade
+  }
+  dist[grafo->idVerticeOrigem-1] = 0.0; // Distância da origem até a origem é 0
 
-    while Q is not empty: // The main loop
-      u ← Q.extract_min() // Remove and return best vertex
-      for each neighbor v of u: // Go through all v neighbors of u
-        alt ← dist[u] + Graph.Edges(u, v)
-        if alt < dist[v]:
-          dist[v] ← alt
-          prev[v] ← u
-          Q.decrease_priority(v, alt)
-  */
+
+  while (!PQ_empty(pq)) {
+    Item item = PQ_min(pq);
+    printf("id: %d, value: %lf\n", id(item), value(item));
+    Vertice* u = grafo->vertices[id(item)-1];
+
+    for (i = 0; i < getNumVizinhosVertice(u); i++) {
+      Aresta* a = grafo->arestas[getIdArestasVizinhasVertice(u)[i]];
+      Vertice* v = getVerticeDestinoAresta(a);
+      double alt = dist[getIdVertice(u)-1] + getPesoAresta(a);
+
+      if (alt < dist[getIdVertice(v)-1]) {
+        dist[getIdVertice(v)-1] = alt;
+        prev[getIdVertice(v)-1] = getIdVertice(u)-1;
+        PQ_decrease_key(pq, getIdVertice(v)-1, alt);
+      }
+    }
+  }
+
+  PQ_finish(pq);
+
+  for (i = 0; i < grafo->numVertices; i++) {
+    printf("%lf ", dist[i]);
+  }
+  printf("\n");
+
+  for (i = 0; i < grafo->numVertices; i++) {
+    printf("%d ", prev[i]);
+  }
+  printf("\n");
 
   /*
     Depois disso a função deve dar um passo para frente,ou seja, 
@@ -119,10 +152,7 @@ void aplicaAlgoritmoDijkstra(Grafo* grafo) {
   */
 }
 
-// TODO: implementar essa função
-int chegouAoDestino(Grafo* grafo) {
-
-}
+int chegouAoDestino(Grafo* grafo) { return grafo->idVerticeOrigem == grafo->idVerticeDestino; }
 
 void recalculaPesosGrafo(Grafo* grafo, int idVerticeOrigem, int idVerticeDestino, double velMedia) {
   int i = 0;

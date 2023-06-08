@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include "vertice.h"
 #include "aresta.h"
+#include "PQ.h"
+#include "item.h"
 
 #define INFINITY 999999
 #define UNDEFINED -1
@@ -22,7 +24,7 @@ Grafo* leGrafo(FILE* arquivoEntrada);
 void calculaMelhorRotaGrafo(Grafo* grafo, FILE* arquivoEntrada);
 
 // TODO: comentar
-void aplicaAlgoritmoDijkstra(Grafo* grafo);
+void aplicaAlgoritmoDijkstra(Grafo* grafo, double* dist, int* prev);
 
 /// @brief Verifica se o grafo chegou ao destino
 /// @param grafo 
