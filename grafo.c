@@ -10,6 +10,7 @@ struct grafo {
   double tempoPercorrido;
   double distanciaPercorrida;
   int* idVerticesPercorridos;
+  int** valores;
 };
 
 /* Função auxiliar da leitura do grafa, que verifica se um vértice já foi lido */
@@ -35,6 +36,8 @@ Grafo* leGrafo(FILE* arquivoEntrada) {
 
   /* Criando o vetor de arestas */
   Aresta** arestas = (Aresta**) calloc(numArestas, sizeof(Aresta*));
+
+  int matriz[numVertices][numVertices];
 
   int i = 0;
   for (i = 0; i < numArestas; i++) {
@@ -64,9 +67,35 @@ Grafo* leGrafo(FILE* arquivoEntrada) {
 
     /* Adicionando a aresta no vetor, conforme elas aparecem no arquivo */
     arestas[i] = a;
+
+
+    //======================================================================================//
+    //======================================================================================//
+    //======================================================================================//
+    //======================================================================================//
+    //======================================================================================//
+
+    
+
+    for(int j=0;j<numVertices;j++) {
+      for(int k=0;k<numVertices;k++) {
+        matriz[j][k]=0;
+      }
+    }
+    
+    if(idVerticeOrigemAresta>idVerticeDestinoAresta) {
+      matriz[idVerticeDestinoAresta-1][idVerticeOrigemAresta-1]=dist;
+      matriz[idVerticeOrigemAresta-1][idVerticeDestinoAresta-1]=velMedia;
+    }
+    else {
+      matriz[idVerticeOrigemAresta-1][idVerticeDestinoAresta-1]=dist;
+      matriz[idVerticeDestinoAresta-1][idVerticeOrigemAresta-1]=velMedia;
+    }
   }
+
+
   
-  return inicializaGrafo(vertices, arestas, numVertices, numArestas, idVerticeOrigem, idVerticeDestino);
+  return inicializaGrafo(vertices, arestas, numVertices, numArestas, idVerticeOrigem, idVerticeDestino, matriz);
 }
 
 void calculaMelhorRotaGrafo(Grafo* grafo, FILE* arquivoEntrada) {
@@ -89,6 +118,10 @@ void calculaMelhorRotaGrafo(Grafo* grafo, FILE* arquivoEntrada) {
 
 // TODO: implementar essa função
 void aplicaAlgoritmoDijkstra(Grafo* grafo) {
+
+  
+
+
   /*
     dist[source] ← 0  // Initialization
     create vertex priority queue Q
@@ -143,7 +176,8 @@ Grafo *inicializaGrafo(
   int numVertices,
   int numArestas,
   int idVerticeOrigem,
-  int idVerticeDestino
+  int idVerticeDestino,
+  int** matriz
 ) {
   Grafo* g = (Grafo*) malloc(sizeof(Grafo));
   g->vertices = v;
@@ -155,6 +189,17 @@ Grafo *inicializaGrafo(
   g->tempoPercorrido = 0.0;
   g->distanciaPercorrida = 0.0;
   g->idVerticesPercorridos = (int*) calloc(numVertices, sizeof(int)); // Começa alocando com o número máximo de vértices
+  
+  g->valores = malloc(numVertices*sizeof(int*));
+  for(int i=0;i<numVertices;i++) {
+    g->valores[i]=malloc(numVertices*sizeof(int));
+  }
+  for(int i=0;i<numVertices;i++) {
+    for(int j=0;j<numVertices;j++) {
+      g->valores[i][j]=matriz[i][j];
+    }
+  }
+
   return g;
 }
 
