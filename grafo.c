@@ -174,7 +174,7 @@ Grafo *inicializaGrafo(
   int numArestas,
   int idVerticeOrigem,
   int idVerticeDestino,
-  int* matriz[]
+  int matriz[numVertices][numVertices]
 ) {
   Grafo* g = (Grafo*) malloc(sizeof(Grafo));
   g->vertices = v;
