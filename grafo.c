@@ -75,8 +75,7 @@ Grafo* leGrafo(FILE* arquivoEntrada) {
     //======================================================================================//
     //======================================================================================//
 
-    
-
+  
     for(int j=0;j<numVertices;j++) {
       for(int k=0;k<numVertices;k++) {
         matriz[j][k]=0;
@@ -93,8 +92,6 @@ Grafo* leGrafo(FILE* arquivoEntrada) {
     }
   }
 
-
-  
   return inicializaGrafo(vertices, arestas, numVertices, numArestas, idVerticeOrigem, idVerticeDestino, matriz);
 }
 
@@ -177,7 +174,7 @@ Grafo *inicializaGrafo(
   int numArestas,
   int idVerticeOrigem,
   int idVerticeDestino,
-  int** matriz
+  int* matriz[]
 ) {
   Grafo* g = (Grafo*) malloc(sizeof(Grafo));
   g->vertices = v;
