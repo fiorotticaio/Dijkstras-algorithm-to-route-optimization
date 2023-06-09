@@ -23,8 +23,12 @@ Grafo* leGrafo(FILE* arquivoEntrada);
 /// @param arquivoEntrada 
 void calculaMelhorRotaGrafo(Grafo* grafo, FILE* arquivoEntrada);
 
-// TODO: comentar
-void aplicaAlgoritmoDijkstra(Grafo* grafo, double* dist, int* prev);
+/// @brief Encontra o melhor caminho de um grafo com origem e destino
+/// @param grafo 
+/// @param pesos 
+/// @param dist 
+/// @param prev 
+void aplicaAlgoritmoDijkstra(Grafo* grafo, double* pesos, double* dist, int* prev);
 
 /// @brief Verifica se o grafo chegou ao destino
 /// @param grafo 
@@ -37,6 +41,11 @@ int chegouAoDestino(Grafo* grafo);
 /// @param idVerticeDestino 
 /// @param velMedia 
 void recalculaPesosGrafo(Grafo* grafo, int idVerticeOrigem, int idVerticeDestino, double velMedia);
+
+/// @brief Imprime a saída do programa
+/// @param grafo 
+/// @param arq 
+void imprimeResultadoGrafo(Grafo* grafo, FILE* arq);
 
 /// @brief Inicializa um grafo
 /// @param v 

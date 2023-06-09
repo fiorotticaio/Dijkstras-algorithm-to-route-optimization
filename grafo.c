@@ -76,22 +76,16 @@ void calculaMelhorRotaGrafo(Grafo* grafo, FILE* arquivoEntrada) {
   int idVerticeOrigem = 0, idVerticeDestino = 0, instanteDeTempo = 0;
   double velMedia = 0.0; // Nova velocidade média de uma aresta
 
-  /* Variáveis que vão guardar o resultado */
-  double dist[grafo->numVertices]; // Peso (tempo) da distancia da origem até o vértice
+  /* Variáveis que vão guardar o resultado do algoritimo */
+  double temp[grafo->numVertices]; // tempo da origem até o vértice
+  double dist[grafo->numVertices]; // Distancia da origem até o vértice
   int prev[grafo->numVertices]; // Guarda o id dos vértices anteriores
 
-  aplicaAlgoritmoDijkstra(grafo, dist, prev);
-  return;
+  aplicaAlgoritmoDijkstra(grafo, temp, dist, prev);
 
   while (!chegouAoDestino(grafo)) {
-    if (!feof(arquivoEntrada)) {
-      fscanf(arquivoEntrada, "%d;%d;%d;%lf", &instanteDeTempo, &idVerticeOrigem, &idVerticeDestino, &velMedia);
-    }
-
-    aplicaAlgoritmoDijkstra(grafo, dist, prev);
-    if (grafo->tempoPercorrido > instanteDeTempo) {
-      recalculaPesosGrafo(grafo, idVerticeOrigem, idVerticeDestino, velMedia); // Recalcula os pesos das arestas do grafo
-    }
+    // Atualizações
+    aplicaAlgoritmoDijkstra(grafo, temp, dist, prev);
   }
 }
 
@@ -102,97 +96,63 @@ static Item makeItem(Vertice* v, double value) {
   return item;
 }
 
-static void percorreUmVerticeGrafo(Grafo* grafo, int idVertice) {
-  // grafo->tempoPercorrido += 
-  // grafo->distanciaPercorrida += 
+static void percorreUmVerticeGrafo(Grafo* grafo, int idVertice, double tempo, double distancia) {
+  grafo->tempoPercorrido += tempo;
+  grafo->distanciaPercorrida += distancia;
   grafo->idVerticesPercorridos[grafo->numVerticesPercorridos] = idVertice;
   grafo->numVerticesPercorridos++;
+  grafo->idVerticeOrigem = idVertice;
 }
 
-void aplicaAlgoritmoDijkstra(Grafo* grafo, double* dist, int* prev) {
+void aplicaAlgoritmoDijkstra(Grafo* grafo, double* temp, double* dist, int* prev) {
   Pq* pQueue = PQ_init(grafo->numVertices); // Inicializa a fila de prioridade
 
+  /* Inicialização das variáveis para a origem */
+  temp[grafo->idVerticeOrigem-1] = 0.0; // Tempo da origem até a origem é 0
   dist[grafo->idVerticeOrigem-1] = 0.0; // Distância da origem até a origem é 0
   prev[grafo->idVerticeOrigem-1] = UNDEFINED; // Vértice anterior não existe
 
   int i = 0;
   for (i = 0; i < grafo->numVertices; i++) {
     if (getIdVertice(grafo->vertices[i]) != grafo->idVerticeOrigem) {
+      temp[i] = INFINITY; // Tempo da origem até o vértice é infinito
       dist[i] = INFINITY; // Distância da origem até o vértice é infinito
       prev[i] = UNDEFINED; // Vértice anterior não existe
     }
-    PQ_insert(pQueue, makeItem(grafo->vertices[i], dist[i])); // Insere o vértice na fila de prioridade
+    PQ_insert(pQueue, makeItem(grafo->vertices[i], temp[i])); // Insere o vértice na fila de prioridade
   }
-
-  imprimePq(pQueue); // Debug
-
-  /* Pra incrementar ao grafo depois */
-  double pesoArestas[grafo->numArestas];
-  double distArestas[grafo->numArestas];
 
   while (!PQ_empty(pQueue)) {
     Item item = PQ_delmin(pQueue);
-    printf("id: %d, value: %lf\n", id(item), value(item));
-    
-    Vertice* u = grafo->vertices[id(item)-1];
-    printf("del mim: Vertice u com id: %d\n", getIdVertice(u));
+    Vertice* u = grafo->vertices[id(item)-1]; // Pega o vértice relacionado ao item removido da fila
 
     for (i = 0; i < getNumVizinhosVertice(u); i++) {
-      Aresta* a = grafo->arestas[getIdArestasVizinhasVertice(u)[i]];
-      Vertice* v = getVerticeDestinoAresta(a);
-      printf("Vertice v (destino da aresta) com id: %d\n", getIdVertice(v));
+      Aresta* a = grafo->arestas[getIdArestasVizinhasVertice(u)[i]]; // Pega uma das arestas conectadas ao vértice
+      Vertice* v = getVerticeDestinoAresta(a); // Pega o vértice de destino da aresta (vizinho de u)
 
-      double alt = dist[getIdVertice(u)-1] + getPesoAresta(a);
-      printf("dist[getIdVertice(u)-1] = %.5lf + getPesoAresta(a) = %.5lf\n", dist[getIdVertice(u)-1], getPesoAresta(a));
-      printf("alt: %lf\n", alt);
+      double alt = temp[getIdVertice(u)-1] + getPesoAresta(a); // Novo tempo para se deslocar de até v
+      double alt2 = dist[getIdVertice(u)-1] + getDistAresta(a); // Nova distância para se deslocar de até v
 
-
-      printf("alt = %.5lf < dist[getIdVertice(v)-1] = %.5lf\n\n", alt, dist[getIdVertice(v)-1]);
-      if (alt < dist[getIdVertice(v)-1]) {
-        dist[getIdVertice(v)-1] = alt;
-        prev[getIdVertice(v)-1] = getIdVertice(u);
-        PQ_decrease_key(pQueue, getIdVertice(v), alt);
+      if (alt < temp[getIdVertice(v)-1]) { // Se o novo tempo for menor que o anteriror
+        temp[getIdVertice(v)-1] = alt; // Atualiza o novo tempo
+        dist[getIdVertice(v)-1] = alt2; // Atualiza a nova distância
+        prev[getIdVertice(v)-1] = getIdVertice(u); // Salva o id do vértice anterior
+        PQ_decrease_key(pQueue, getIdVertice(v), alt); // Atualiza o valor do vértice na fila de prioridade
       }
     }
   }
 
-  imprimePq(pQueue); // Debug
   PQ_finish(pQueue);
 
-  for (i = 0; i < grafo->numVertices; i++) {
-    printf("%lf ", dist[i]);
+  /* Determina o próximo vértice do melhor caminho gerado */
+  int ultimoVertice = grafo->idVerticeDestino;
+  int proxVertice = ultimoVertice;
+  while (prev[ultimoVertice-1] != UNDEFINED) {
+    proxVertice = ultimoVertice;
+    ultimoVertice = prev[ultimoVertice-1];
   }
-  printf("\n");
 
-  for (i = 0; i < grafo->numVertices; i++) {
-    printf("%d ", prev[i]);
-  }
-  printf("\n");
-
-  /* Determina o próximo vértice do melhor caminho */
-  int proximoVertice = grafo->idVerticeDestino;
-  int ant = proximoVertice;
-  while (prev[proximoVertice-1] != UNDEFINED) {
-    printf("%d ", proximoVertice);
-    ant = proximoVertice;
-    proximoVertice = prev[proximoVertice-1];
-  }
-  printf("\n");
-
-  printf("prox: %d\n", ant);
-
-  percorreUmVerticeGrafo(grafo, ant);
-  
-
-  printf("\n");
-
-  /*
-    Depois disso a função deve dar um passo para frente,ou seja, 
-    trocar o vértice de origem do grafo para o próximo vértice do algoritmo.
-    Depois disso ele deve adicionar o tempo q gastou com esse passo no campo tempoPercorrido,
-    adicionar a distância percorrida no campo distanciaPercorrida e adicionar o id do vértice percorrido
-    no campo de idVerticesPercorridos.
-  */
+  percorreUmVerticeGrafo(grafo, proxVertice, temp[proxVertice-1], dist[proxVertice-1]);
 }
 
 int chegouAoDestino(Grafo* grafo) { return grafo->idVerticeOrigem == grafo->idVerticeDestino; }
@@ -208,6 +168,25 @@ void recalculaPesosGrafo(Grafo* grafo, int idVerticeOrigem, int idVerticeDestino
       setVelMediaAresta(a, velMedia); // Atualiza a velocidade média da aresta 
     }
   }
+}
+
+void imprimeResultadoGrafo(Grafo* grafo, FILE* arq) {
+  /* Imprimindo o caminho do percurso */
+  int i = 0;
+  for (i = 0; i < grafo->numVerticesPercorridos; i++) {
+    fprintf(arq, "%d", grafo->idVerticesPercorridos[i]);
+    if (i != grafo->numVerticesPercorridos-1) fprintf(arq, ";");
+  }
+  printf("\n");
+
+  /* Imprimindo a distância (em km) de percurso */
+  fprintf(arq, "\n%.2lf\n", (grafo->distanciaPercorrida)/1000);
+
+  /* Imprimindo o tempo de percurso */
+  int horas = (int) (grafo->tempoPercorrido/3600);
+  int minutos = (int) ((grafo->tempoPercorrido - horas*3600)/60);
+  double segundos = grafo->tempoPercorrido - horas*3600 - minutos*60;
+  fprintf(arq, "%02d:%02d:%.1lf", horas, minutos, segundos);
 }
 
 Grafo *inicializaGrafo(
@@ -229,6 +208,10 @@ Grafo *inicializaGrafo(
   g->distanciaPercorrida = 0.0;
   g->idVerticesPercorridos = (int*) calloc(numVertices, sizeof(int)); // Começa alocando com o número máximo de vértices
   g->numVerticesPercorridos = 0;
+
+  /* O primeiro vértice percprrido é a própria origme */
+  g->idVerticesPercorridos[g->numVerticesPercorridos] = idVerticeOrigem;
+  g->numVerticesPercorridos++;
   return g;
 }
 
