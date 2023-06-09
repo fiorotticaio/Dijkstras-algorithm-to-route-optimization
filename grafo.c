@@ -73,13 +73,23 @@ Grafo* leGrafo(FILE* arquivoEntrada) {
   double instanteTempo, dist;
   int idVerticeOrigemMudanca, idVerticeDestinoMudanca;
 
+  long saved = ftell(arquivoEntrada);
+  int count=0;
   while(!feof(arquivoEntrada)) {
     fscanf(arquivoEntrada, "%lf;%d;%d;%lf", &instanteTempo, &idVerticeOrigemMudanca, &idVerticeDestinoMudanca, &dist);
-    Atualizacao* att=inicializaAtualizacao(instanteTempo, idVerticeOrigemMudanca, idVerticeDestinoMudanca, dist);
-    
+    count++;
+    printf("%d\n", count);
+  }
+  fseek(arquivoEntrada, saved, SEEK_SET);
+
+  Atualizacao** att = (Atualizacao**) calloc(count, sizeof(Atualizacao*));
+
+  for(int i=0;i<count;i++) {
+    fscanf(arquivoEntrada, "%lf;%d;%d;%lf", &instanteTempo, &idVerticeOrigemMudanca, &idVerticeDestinoMudanca, &dist);
+    att[i]=inicializaAtualizacao(instanteTempo, idVerticeOrigemMudanca, idVerticeDestinoMudanca, dist);
   }
   
-  return inicializaGrafo(vertices, arestas, numVertices, numArestas, idVerticeOrigem, idVerticeDestino);
+  return inicializaGrafo(vertices, arestas, numVertices, numArestas, idVerticeOrigem, idVerticeDestino, att);
 }
 
 void calculaMelhorRotaGrafo(Grafo* grafo, FILE* arquivoEntrada) {
@@ -209,7 +219,8 @@ Grafo *inicializaGrafo(
   int numVertices,
   int numArestas,
   int idVerticeOrigem,
-  int idVerticeDestino
+  int idVerticeDestino,
+  Atualizacao** att
 ) {
   Grafo* g = (Grafo*) malloc(sizeof(Grafo));
   g->vertices = v;
@@ -222,6 +233,7 @@ Grafo *inicializaGrafo(
   g->distanciaPercorrida = 0.0;
   g->idVerticesPercorridos = (int*) calloc(numVertices, sizeof(int)); // Começa alocando com o número máximo de vértices
   g->numVerticesPercorridos = 0;
+  g->atualizacoes = att;
 
   /* O primeiro vértice percprrido é a própria origme */
   g->idVerticesPercorridos[g->numVerticesPercorridos] = idVerticeOrigem;
