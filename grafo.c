@@ -180,11 +180,18 @@ void aplicaAlgoritmoDijkstra(Grafo* grafo) {
     printf("%d ", pai[i]+1);
   }
   printf("\n");
+
   for(int i=0;i<numVertices;i++) {
     printf("%.2lf ", distancia[i]*40);
   }
   printf("\n");
 
+  int l=grafo->idVerticeDestino-1;
+  while (l!=-1) {
+    printf("%d ", l+1);
+    l=pai[l];
+  }
+  printf("\n");
 
   /*
     dist[source] ← 0  // Initialization
