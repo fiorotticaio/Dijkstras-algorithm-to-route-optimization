@@ -82,4 +82,10 @@ void setNumVerticesGrafo(Grafo* g, int numVertices);
 /// @param numArestas 
 void setNumArestasGrafo(Grafo* g, int numArestas);
 
+
+int distanciaMinima(double distancia[], int visitados[], int numVertices);
+double getValorMatriz(Grafo* g, int i, int j);
+double getPesoMatriz(Grafo* g, int i, int j);
+int setValorMatriz(Grafo* g, int i, int j, double valor);
+
 #endif // GRAFO_H

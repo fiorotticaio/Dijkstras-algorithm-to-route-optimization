@@ -26,6 +26,7 @@ int main(int argc, char** argv) {
   Grafo* grafo = leGrafo(arquivoEntrada);
   imprimeGrafo(grafo); // Debug
 
+  aplicaAlgoritmoDijkstra(grafo);
 
   /*============ Aplicação do algoritmo de Dijkstra ============*/
   calculaMelhorRotaGrafo(grafo, arquivoEntrada);

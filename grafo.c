@@ -114,10 +114,57 @@ void calculaMelhorRotaGrafo(Grafo* grafo, FILE* arquivoEntrada) {
   }
 }
 
+int distanciaMinima(double distancia[], int visitados[], int numVertices){
+    int min=99999999, minPosicao;
+
+    for (int i=0;i<numVertices;i++) {
+      if (visitados[i]==0 && distancia[i]<=min) {
+        min = distancia[i];
+        minPosicao=i;
+      }
+    }
+
+    return minPosicao;
+}
+
 // TODO: implementar essa função
 void aplicaAlgoritmoDijkstra(Grafo* grafo) {
 
-  
+  int numVertices=getNumVerticesGrafo(grafo);
+  double distancia[numVertices];
+  int visitados[numVertices];
+
+  int matriz[numVertices][numVertices];
+
+  // for(int i=0;i<numVertices;i++) {
+  //   for(int j=0;j<numVertices;j++) {
+  //     matriz[i][j]=getValorMatriz(grafo, i, j);
+  //   }
+  // }
+
+  for(int i=0;i<numVertices;i++) {
+    distancia[i]=99999999;
+    visitados[i]=0;
+  }
+
+  distancia[grafo->idVerticeOrigem-1]=0;
+
+  for(int x=0;x<numVertices;x++) {
+    int i=distanciaMinima(distancia, visitados, numVertices);
+    visitados[i]=1;
+    
+    for(int j=0;j<numVertices;j++) {
+      if(!visitados[j] && getValorMatriz(grafo, i, j) && distancia[i]!=99999999 && distancia[i]+getPesoMatriz(grafo, i, j)<distancia[j]) {
+        distancia[j]=distancia[i]+getPesoMatriz(grafo, i, j);
+      }
+    }
+  }
+
+  printf("\n");
+  for(int i=0;i<numVertices;i++) {
+    printf("%.2lf ", distancia[i]/40);
+  }
+  printf("\n");
 
 
   /*
@@ -253,6 +300,12 @@ int getNumVerticesGrafo(Grafo *g) { return g->numVertices; }
 
 int getNumArestasGrafo(Grafo *g) { return g->numArestas; }
 
+double getValorMatriz(Grafo* g, int i, int j) {return g->valores[i][j];}
+
+double getPesoMatriz(Grafo* g, int i, int j) { return g->valores[i][j]*g->valores[j][i]; }
+
 void setNumVerticesGrafo(Grafo *g, int numVertices) { g->numVertices = numVertices; }
 
 void setNumArestasGrafo(Grafo *g, int numArestas) { g->numArestas = numArestas; }
+
+int setValorMatriz(Grafo* g, int i, int j, double valor) { g->valores[i][j]=valor; }
