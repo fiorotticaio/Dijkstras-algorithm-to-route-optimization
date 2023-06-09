@@ -84,8 +84,11 @@ void calculaMelhorRotaGrafo(Grafo* grafo, FILE* arquivoEntrada) {
   aplicaAlgoritmoDijkstra(grafo, temp, dist, prev);
 
   while (!chegouAoDestino(grafo)) {
-    // Atualizações
-    aplicaAlgoritmoDijkstra(grafo, temp, dist, prev);
+    // Lógica das atualizações
+
+    // Se atualizou {
+      aplicaAlgoritmoDijkstra(grafo, temp, dist, prev);
+    // }
   }
 }
 
