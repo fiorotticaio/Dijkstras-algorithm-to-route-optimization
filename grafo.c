@@ -10,7 +10,7 @@ struct grafo {
   double tempoPercorrido;
   double distanciaPercorrida;
   int* idVerticesPercorridos;
-  double** valores;
+  //double** valores;
   double** distancias;
   double** velocidades;
 };
@@ -39,12 +39,12 @@ Grafo* leGrafo(FILE* arquivoEntrada) {
   /* Criando o vetor de arestas */
   Aresta** arestas = (Aresta**) calloc(numArestas, sizeof(Aresta*));
 
-  double matriz[numVertices][numVertices];
+  //double matriz[numVertices][numVertices];
   double distancias[numVertices][numVertices];
   double velocidades[numVertices][numVertices];
   for(int j=0;j<numVertices;j++) {
     for(int k=0;k<numVertices;k++) {
-      matriz[j][k]=0;
+      //matriz[j][k]=0;
       distancias[j][k]=0;
       velocidades[j][k]=0;
     }
@@ -89,14 +89,14 @@ Grafo* leGrafo(FILE* arquivoEntrada) {
   
     
     
-    if(idVerticeOrigemAresta>idVerticeDestinoAresta) {
-      matriz[idVerticeDestinoAresta-1][idVerticeOrigemAresta-1]=dist;
-      matriz[idVerticeOrigemAresta-1][idVerticeDestinoAresta-1]=velMedia;
-    }
-    else {
-      matriz[idVerticeOrigemAresta-1][idVerticeDestinoAresta-1]=dist;
-      matriz[idVerticeDestinoAresta-1][idVerticeOrigemAresta-1]=velMedia;
-    }
+    // if(idVerticeOrigemAresta>idVerticeDestinoAresta) {
+    //   matriz[idVerticeDestinoAresta-1][idVerticeOrigemAresta-1]=dist;
+    //   matriz[idVerticeOrigemAresta-1][idVerticeDestinoAresta-1]=velMedia;
+    // }
+    // else {
+    //   matriz[idVerticeOrigemAresta-1][idVerticeDestinoAresta-1]=dist;
+    //   matriz[idVerticeDestinoAresta-1][idVerticeOrigemAresta-1]=velMedia;
+    // }
 
 
     distancias[idVerticeOrigemAresta-1][idVerticeDestinoAresta-1]=dist;
@@ -105,7 +105,7 @@ Grafo* leGrafo(FILE* arquivoEntrada) {
 
   }
 
-  return inicializaGrafo(vertices, arestas, numVertices, numArestas, idVerticeOrigem, idVerticeDestino, matriz, distancias, velocidades);
+  return inicializaGrafo(vertices, arestas, numVertices, numArestas, idVerticeOrigem, idVerticeDestino, distancias, velocidades);
 }
 
 void calculaMelhorRotaGrafo(Grafo* grafo, FILE* arquivoEntrada) {
@@ -146,14 +146,6 @@ void aplicaAlgoritmoDijkstra(Grafo* grafo) {
   double distancia[numVertices];
   int visitados[numVertices];
   int pai[numVertices];
-
-  int matriz[numVertices][numVertices];
-
-  // for(int i=0;i<numVertices;i++) {
-  //   for(int j=0;j<numVertices;j++) {
-  //     matriz[i][j]=getValorMatriz(grafo, i, j);
-  //   }
-  // }
 
   for(int i=0;i<numVertices;i++) {
     distancia[i]=99999999;
@@ -240,13 +232,6 @@ void recalculaPesosGrafo(Grafo* grafo, int idVerticeOrigem, int idVerticeDestino
     }
   }
 
-  if(idVerticeOrigem>idVerticeDestino) {
-    grafo->valores[idVerticeOrigem-1][idVerticeDestino-1]=velMedia;
-  }
-  else {
-    grafo->valores[idVerticeDestino-1][idVerticeOrigem-1]=velMedia;
-  }
-
   grafo->velocidades[idVerticeOrigem-1][idVerticeDestino-1]=velMedia;
 }
 
@@ -257,7 +242,6 @@ Grafo *inicializaGrafo(
   int numArestas,
   int idVerticeOrigem,
   int idVerticeDestino,
-  double matriz[numVertices][numVertices],
   double dist[numVertices][numVertices],
   double vel[numVertices][numVertices]
 ) {
@@ -272,17 +256,14 @@ Grafo *inicializaGrafo(
   g->distanciaPercorrida = 0.0;
   g->idVerticesPercorridos = (int*) calloc(numVertices, sizeof(int)); // Começa alocando com o número máximo de vértices
   
-  g->valores = malloc(numVertices*sizeof(double*));
   g->distancias = malloc(numVertices*sizeof(double*));
   g->velocidades = malloc(numVertices*sizeof(double*));
   for(int i=0;i<numVertices;i++) {
-    g->valores[i]=malloc(numVertices*sizeof(double));
     g->distancias[i]=malloc(numVertices*sizeof(double));
     g->velocidades[i]=malloc(numVertices*sizeof(double));
   }
   for(int i=0;i<numVertices;i++) {
     for(int j=0;j<numVertices;j++) {
-      g->valores[i][j]=matriz[i][j];
       g->distancias[i][j]=dist[i][j];
       g->velocidades[i][j]=vel[i][j];
     }
@@ -301,15 +282,9 @@ void destroiGrafo(Grafo *g) {
     destroiAresta(g->arestas[i]);
   }
   for(i=0;i<g->numVertices;i++) {
-    free(g->valores[i]);
-  }
-  for(i=0;i<g->numVertices;i++) {
     free(g->distancias[i]);
-  }
-  for(i=0;i<g->numVertices;i++) {
     free(g->velocidades[i]);
   }
-  free(g->valores);
   free(g->distancias);
   free(g->velocidades);
   free(g->arestas);
@@ -344,8 +319,6 @@ int getNumVerticesGrafo(Grafo *g) { return g->numVertices; }
 
 int getNumArestasGrafo(Grafo *g) { return g->numArestas; }
 
-double getValorMatriz(Grafo* g, int i, int j) {return g->valores[i][j];}
-
 double getValorDistancia(Grafo* g, int i, int j) {return g->distancias[i][j];}
 
 double getPesoMatriz(Grafo* g, int i, int j) { return g->distancias[i][j]/g->velocidades[i][j]; }
@@ -353,5 +326,3 @@ double getPesoMatriz(Grafo* g, int i, int j) { return g->distancias[i][j]/g->vel
 void setNumVerticesGrafo(Grafo *g, int numVertices) { g->numVertices = numVertices; }
 
 void setNumArestasGrafo(Grafo *g, int numArestas) { g->numArestas = numArestas; }
-
-int setValorMatriz(Grafo* g, int i, int j, double valor) { g->valores[i][j]=valor; }
