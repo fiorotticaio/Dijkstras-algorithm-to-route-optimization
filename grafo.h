@@ -42,7 +42,7 @@ void recalculaPesosGrafo(Grafo* grafo, int idVerticeOrigem, int idVerticeDestino
 /// @param nVertices 
 /// @param nArestas 
 /// @return Ponteiro para o grafo inicializado
-Grafo* inicializaGrafo(Vertice** v, Aresta** a, int numVertices, int numArestas, int idVerticeOrigem, int idVerticeDestino, double matriz[numVertices][numVertices]);
+Grafo* inicializaGrafo(Vertice** v, Aresta** a, int numVertices, int numArestas, int idVerticeOrigem, int idVerticeDestino, double matriz[numVertices][numVertices], double dist[numVertices][numVertices], double vel[numVertices][numVertices]);
 
 /// @brief Libera a memoria alocada para um grafo
 /// @param g 
@@ -85,6 +85,7 @@ void setNumArestasGrafo(Grafo* g, int numArestas);
 
 int distanciaMinima(double distancia[], int visitados[], int numVertices);
 double getValorMatriz(Grafo* g, int i, int j);
+double getValorDistancia(Grafo* g, int i, int j);
 double getPesoMatriz(Grafo* g, int i, int j);
 int setValorMatriz(Grafo* g, int i, int j, double valor);
 
