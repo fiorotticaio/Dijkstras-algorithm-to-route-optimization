@@ -54,7 +54,7 @@ void imprimeResultadoGrafo(Grafo* grafo, FILE* arq);
 /// @param nVertices 
 /// @param nArestas 
 /// @return Ponteiro para o grafo inicializado
-Grafo* inicializaGrafo(Vertice** v, Aresta** a, int numVertices, int numArestas, int idVerticeOrigem, int idVerticeDestino, Atualizacao** att);
+Grafo* inicializaGrafo(Vertice** v, Aresta** a, int numVertices, int numArestas, int idVerticeOrigem, int idVerticeDestino, Atualizacao** att, int count);
 
 /// @brief Libera a memoria alocada para um grafo
 /// @param g 

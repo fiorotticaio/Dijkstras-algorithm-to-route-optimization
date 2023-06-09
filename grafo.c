@@ -12,6 +12,7 @@ struct grafo {
   double distanciaPercorrida;
   int* idVerticesPercorridos;
   int numVerticesPercorridos;
+  int numAtualizacoes;
 };
 
 /* Função auxiliar da leitura do grafa, que verifica se um vértice já foi lido */
@@ -78,7 +79,6 @@ Grafo* leGrafo(FILE* arquivoEntrada) {
   while(!feof(arquivoEntrada)) {
     fscanf(arquivoEntrada, "%lf;%d;%d;%lf", &instanteTempo, &idVerticeOrigemMudanca, &idVerticeDestinoMudanca, &dist);
     count++;
-    printf("%d\n", count);
   }
   fseek(arquivoEntrada, saved, SEEK_SET);
 
@@ -89,11 +89,21 @@ Grafo* leGrafo(FILE* arquivoEntrada) {
     att[i]=inicializaAtualizacao(instanteTempo, idVerticeOrigemMudanca, idVerticeDestinoMudanca, dist);
   }
   
-  return inicializaGrafo(vertices, arestas, numVertices, numArestas, idVerticeOrigem, idVerticeDestino, att);
+  return inicializaGrafo(vertices, arestas, numVertices, numArestas, idVerticeOrigem, idVerticeDestino, att, count);
+}
+
+void checaAtualizacoes(Grafo* grafo, int attAtual) {
+  for(int i=attAtual;i<grafo->numAtualizacoes;i++) {
+    if(grafo->tempoPercorrido>retornaTempoAtualizacao(grafo->atualizacoes[i])) {
+      recalculaPesosGrafo(grafo, retornaIdVerticeOrigemAtualizacao(grafo->atualizacoes[i]), retornaIdVerticeDestinoAtualizacao(grafo->atualizacoes[i]), retornaVelMediaAtualizacao(grafo->atualizacoes[i]));
+      attAtual++;    
+    }
+    else {break;}
+  }
 }
 
 void calculaMelhorRotaGrafo(Grafo* grafo, FILE* arquivoEntrada) {
-  int idVerticeOrigem = 0, idVerticeDestino = 0, instanteDeTempo = 0;
+  int idVerticeOrigem = 0, idVerticeDestino = 0, instanteDeTempo = 0, attAtual = 0;
   double velMedia = 0.0; // Nova velocidade média de uma aresta
 
   /* Variáveis que vão guardar o resultado do algoritimo */
@@ -101,13 +111,14 @@ void calculaMelhorRotaGrafo(Grafo* grafo, FILE* arquivoEntrada) {
   double dist[grafo->numVertices]; // Distancia da origem até o vértice
   int caminho[grafo->numVertices]; // Guarda o id dos vértices anteriores
 
-
+  checaAtualizacoes(grafo, attAtual);
   aplicaAlgoritmoDijkstra(grafo, tempo, dist, caminho);
 
   while (!chegouAoDestino(grafo)) {
     // Lógica das atualizações
 
     // Se atualizou {
+      checaAtualizacoes(grafo, attAtual);
       aplicaAlgoritmoDijkstra(grafo, tempo, dist, caminho);
     // }
   }
@@ -204,13 +215,13 @@ void imprimeResultadoGrafo(Grafo* grafo, FILE* arq) {
   printf("\n");
 
   /* Imprimindo a distância (em km) de percurso */
-  fprintf(arq, "\n%.2lf\n", (grafo->distanciaPercorrida)/1000);
+  fprintf(arq, "\n%lf\n", (grafo->distanciaPercorrida)/1000);
 
   /* Imprimindo o tempo de percurso */
   int horas = (int) (grafo->tempoPercorrido/3600);
   int minutos = (int) ((grafo->tempoPercorrido - horas*3600)/60);
   double segundos = grafo->tempoPercorrido - horas*3600 - minutos*60;
-  fprintf(arq, "%02d:%02d:%.1lf", horas, minutos, segundos);
+  fprintf(arq, "%02d:%02d:%lf\n", horas, minutos, segundos);
 }
 
 Grafo *inicializaGrafo(
@@ -220,7 +231,8 @@ Grafo *inicializaGrafo(
   int numArestas,
   int idVerticeOrigem,
   int idVerticeDestino,
-  Atualizacao** att
+  Atualizacao** att,
+  int count
 ) {
   Grafo* g = (Grafo*) malloc(sizeof(Grafo));
   g->vertices = v;
@@ -234,6 +246,7 @@ Grafo *inicializaGrafo(
   g->idVerticesPercorridos = (int*) calloc(numVertices, sizeof(int)); // Começa alocando com o número máximo de vértices
   g->numVerticesPercorridos = 0;
   g->atualizacoes = att;
+  g->numAtualizacoes = count;
 
   /* O primeiro vértice percprrido é a própria origme */
   g->idVerticesPercorridos[g->numVerticesPercorridos] = idVerticeOrigem;
