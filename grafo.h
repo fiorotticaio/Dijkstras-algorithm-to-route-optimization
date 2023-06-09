@@ -19,6 +19,9 @@ typedef struct grafo Grafo;
 /// @return Grafo gerado a partir do arquivo de entrada
 Grafo* leGrafo(FILE* arquivoEntrada);
 
+///
+void checaAtualizacoes(Grafo* grafo, int attAtual)
+
 /// @brief Calcula a melhor rota de um grafo
 /// @param grafo 
 /// @param arquivoEntrada 

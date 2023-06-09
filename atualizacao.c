@@ -16,20 +16,12 @@ Atualizacao* inicializaAtualizacao(double tempo, int idVerticeOrigem, int idVert
   return a;
 }
 
-double retornaTempoAtualizacao(Atualizacao* att) {
-  return att->tempo;
-}
+double retornaTempoAtualizacao(Atualizacao* att) { return att->tempo; }
 
-int retornaIdVerticeOrigemAtualizacao(Atualizacao* att) {
-  return att->idVerticeOrigem;
-}
+int retornaIdVerticeOrigemAtualizacao(Atualizacao* att) { return att->idVerticeOrigem; }
 
-int retornaIdVerticeDestinoAtualizacao(Atualizacao* att) {
-  return att->idVerticeDestino;
-}
+int retornaIdVerticeDestinoAtualizacao(Atualizacao* att) { return att->idVerticeDestino; }
 
-double retornaVelMediaAtualizacao(Atualizacao* att) {
-  return att->velMedia;
-}
+double retornaVelMediaAtualizacao(Atualizacao* att) { return att->velMedia; }
 
 

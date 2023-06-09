@@ -94,7 +94,7 @@ Grafo* leGrafo(FILE* arquivoEntrada) {
   return inicializaGrafo(vertices, arestas, numVertices, numArestas, idVerticeOrigem, idVerticeDestino, att, count);
 }
 
-/* Funçao que  */
+/* Funçao que verifica se alguma alteraçao foi feita no momento atual do percurso */
 void checaAtualizacoes(Grafo* grafo, int attAtual) {
   for(int i=attAtual;i<grafo->numAtualizacoes;i++) {
     if(grafo->tempoPercorrido>retornaTempoAtualizacao(grafo->atualizacoes[i])) {
