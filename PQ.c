@@ -62,7 +62,7 @@ Item PQ_min(Pq* pQueue) {
 
 void PQ_decrease_key(Pq* pQueue, int id, double value) {
     int i = pQueue->map[id];
-    pQueue->map[i] = value;
+    value(pQueue->pq[i]) = value;
     fix_up(pQueue, pQueue->pq, i);
 }
 
@@ -77,4 +77,5 @@ int  PQ_size(Pq* pQueue) {
 void PQ_finish(Pq* pQueue) {
     free(pQueue->pq);
     free(pQueue->map);
+    free(pQueue);
 }
