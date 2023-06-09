@@ -79,3 +79,11 @@ void PQ_finish(Pq* pQueue) {
     free(pQueue->map);
     free(pQueue);
 }
+
+void imprimePq(Pq* pQueue) {
+    int i = 0;
+    for (i = 0; i < pQueue->N; i++) {
+        printf("identificador: %d, value: %lf\n", id(pQueue->pq[i+1]), value(pQueue->pq[i+1]));
+    }
+    printf("\n");
+}
