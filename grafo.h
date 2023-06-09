@@ -7,6 +7,7 @@
 #include "aresta.h"
 #include "PQ.h"
 #include "item.h"
+#include "atualizacao.h"
 
 #define INFINITY 999999
 #define UNDEFINED -1

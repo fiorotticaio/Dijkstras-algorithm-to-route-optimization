@@ -3,6 +3,7 @@
 struct grafo {
   Vertice** vertices;
   Aresta** arestas;
+  Atualizacao** atualizacoes; 
   int numVertices;
   int numArestas;
   int idVerticeOrigem;
@@ -68,6 +69,15 @@ Grafo* leGrafo(FILE* arquivoEntrada) {
     /* Adicionando a aresta no vetor, conforme elas aparecem no arquivo */
     arestas[i] = a;
   }
+
+  double instanteTempo, dist;
+  int idVerticeOrigemMudanca, idVerticeDestinoMudanca;
+
+  while(!feof(arquivoEntrada)) {
+    fscanf(arquivoEntrada, "%lf;%d;%d;%lf", &instanteTempo, &idVerticeOrigemMudanca, &idVerticeDestinoMudanca, &dist);
+    Atualizacao* att=inicializaAtualizacao(instanteTempo, idVerticeOrigemMudanca, idVerticeDestinoMudanca, dist);
+    
+  }
   
   return inicializaGrafo(vertices, arestas, numVertices, numArestas, idVerticeOrigem, idVerticeDestino);
 }
@@ -77,17 +87,18 @@ void calculaMelhorRotaGrafo(Grafo* grafo, FILE* arquivoEntrada) {
   double velMedia = 0.0; // Nova velocidade média de uma aresta
 
   /* Variáveis que vão guardar o resultado do algoritimo */
-  double temp[grafo->numVertices]; // tempo da origem até o vértice
+  double tempo[grafo->numVertices]; // tempo da origem até o vértice
   double dist[grafo->numVertices]; // Distancia da origem até o vértice
-  int prev[grafo->numVertices]; // Guarda o id dos vértices anteriores
+  int caminho[grafo->numVertices]; // Guarda o id dos vértices anteriores
 
-  aplicaAlgoritmoDijkstra(grafo, temp, dist, prev);
+
+  aplicaAlgoritmoDijkstra(grafo, tempo, dist, caminho);
 
   while (!chegouAoDestino(grafo)) {
     // Lógica das atualizações
 
     // Se atualizou {
-      aplicaAlgoritmoDijkstra(grafo, temp, dist, prev);
+      aplicaAlgoritmoDijkstra(grafo, tempo, dist, caminho);
     // }
   }
 }
@@ -107,22 +118,22 @@ static void percorreUmVerticeGrafo(Grafo* grafo, int idVertice, double tempo, do
   grafo->idVerticeOrigem = idVertice;
 }
 
-void aplicaAlgoritmoDijkstra(Grafo* grafo, double* temp, double* dist, int* prev) {
+void aplicaAlgoritmoDijkstra(Grafo* grafo, double* tempo, double* dist, int* caminho) {
   Pq* pQueue = PQ_init(grafo->numVertices); // Inicializa a fila de prioridade
 
   /* Inicialização das variáveis para a origem */
-  temp[grafo->idVerticeOrigem-1] = 0.0; // Tempo da origem até a origem é 0
+  tempo[grafo->idVerticeOrigem-1] = 0.0; // Tempo da origem até a origem é 0
   dist[grafo->idVerticeOrigem-1] = 0.0; // Distância da origem até a origem é 0
-  prev[grafo->idVerticeOrigem-1] = UNDEFINED; // Vértice anterior não existe
+  caminho[grafo->idVerticeOrigem-1] = UNDEFINED; // Vértice anterior não existe
 
   int i = 0;
   for (i = 0; i < grafo->numVertices; i++) {
     if (getIdVertice(grafo->vertices[i]) != grafo->idVerticeOrigem) {
-      temp[i] = INFINITY; // Tempo da origem até o vértice é infinito
+      tempo[i] = INFINITY; // Tempo da origem até o vértice é infinito
       dist[i] = INFINITY; // Distância da origem até o vértice é infinito
-      prev[i] = UNDEFINED; // Vértice anterior não existe
+      caminho[i] = UNDEFINED; // Vértice anterior não existe
     }
-    PQ_insert(pQueue, makeItem(grafo->vertices[i], temp[i])); // Insere o vértice na fila de prioridade
+    PQ_insert(pQueue, makeItem(grafo->vertices[i], tempo[i])); // Insere o vértice na fila de prioridade
   }
 
   while (!PQ_empty(pQueue)) {
@@ -133,13 +144,13 @@ void aplicaAlgoritmoDijkstra(Grafo* grafo, double* temp, double* dist, int* prev
       Aresta* a = grafo->arestas[getIdArestasVizinhasVertice(u)[i]]; // Pega uma das arestas conectadas ao vértice
       Vertice* v = getVerticeDestinoAresta(a); // Pega o vértice de destino da aresta (vizinho de u)
 
-      double alt = temp[getIdVertice(u)-1] + getPesoAresta(a); // Novo tempo para se deslocar de até v
+      double alt = tempo[getIdVertice(u)-1] + getPesoAresta(a); // Novo tempo para se deslocar de até v
       double alt2 = dist[getIdVertice(u)-1] + getDistAresta(a); // Nova distância para se deslocar de até v
 
-      if (alt < temp[getIdVertice(v)-1]) { // Se o novo tempo for menor que o anteriror
-        temp[getIdVertice(v)-1] = alt; // Atualiza o novo tempo
+      if (alt < tempo[getIdVertice(v)-1]) { // Se o novo tempo for menor que o anteriror
+        tempo[getIdVertice(v)-1] = alt; // Atualiza o novo tempo
         dist[getIdVertice(v)-1] = alt2; // Atualiza a nova distância
-        prev[getIdVertice(v)-1] = getIdVertice(u); // Salva o id do vértice anterior
+        caminho[getIdVertice(v)-1] = getIdVertice(u); // Salva o id do vértice anterior
         PQ_decrease_key(pQueue, getIdVertice(v), alt); // Atualiza o valor do vértice na fila de prioridade
       }
     }
@@ -150,12 +161,12 @@ void aplicaAlgoritmoDijkstra(Grafo* grafo, double* temp, double* dist, int* prev
   /* Determina o próximo vértice do melhor caminho gerado */
   int ultimoVertice = grafo->idVerticeDestino;
   int proxVertice = ultimoVertice;
-  while (prev[ultimoVertice-1] != UNDEFINED) {
+  while (caminho[ultimoVertice-1] != UNDEFINED) {
     proxVertice = ultimoVertice;
-    ultimoVertice = prev[ultimoVertice-1];
+    ultimoVertice = caminho[ultimoVertice-1];
   }
 
-  percorreUmVerticeGrafo(grafo, proxVertice, temp[proxVertice-1], dist[proxVertice-1]);
+  percorreUmVerticeGrafo(grafo, proxVertice, tempo[proxVertice-1], dist[proxVertice-1]);
 }
 
 int chegouAoDestino(Grafo* grafo) { return grafo->idVerticeOrigem == grafo->idVerticeDestino; }
