@@ -11,7 +11,7 @@ struct aresta {
 
 double calculaPesoAresta(double dist, double velMedia) {
   /* Peso da aresta (rodovia): tempo para se deslocar nela */
-  return (double) (dist / velMedia); 
+  return (double) (dist / (velMedia*0.277778)); 
 }
 
 Aresta *inicializaAresta(int id, Vertice *vOrigem, Vertice *vDestino, double dist, double velMedia) {
