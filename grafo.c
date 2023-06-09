@@ -74,6 +74,7 @@ Grafo* leGrafo(FILE* arquivoEntrada) {
   double instanteTempo, dist;
   int idVerticeOrigemMudanca, idVerticeDestinoMudanca;
 
+  /* Essa parte serve para calcular quantas alteraçoes de tempo serão feitas no código */
   long saved = ftell(arquivoEntrada);
   int count=0;
   while(!feof(arquivoEntrada)) {
@@ -84,6 +85,7 @@ Grafo* leGrafo(FILE* arquivoEntrada) {
 
   Atualizacao** att = (Atualizacao**) calloc(count, sizeof(Atualizacao*));
 
+  /* Funçao para criar e armazenar todas as alteraçoes que serao feitas durante o percurso */
   for(int i=0;i<count;i++) {
     fscanf(arquivoEntrada, "%lf;%d;%d;%lf", &instanteTempo, &idVerticeOrigemMudanca, &idVerticeDestinoMudanca, &dist);
     att[i]=inicializaAtualizacao(instanteTempo, idVerticeOrigemMudanca, idVerticeDestinoMudanca, dist);
@@ -92,6 +94,7 @@ Grafo* leGrafo(FILE* arquivoEntrada) {
   return inicializaGrafo(vertices, arestas, numVertices, numArestas, idVerticeOrigem, idVerticeDestino, att, count);
 }
 
+/* Funçao que  */
 void checaAtualizacoes(Grafo* grafo, int attAtual) {
   for(int i=attAtual;i<grafo->numAtualizacoes;i++) {
     if(grafo->tempoPercorrido>retornaTempoAtualizacao(grafo->atualizacoes[i])) {
@@ -111,17 +114,11 @@ void calculaMelhorRotaGrafo(Grafo* grafo, FILE* arquivoEntrada) {
   double dist[grafo->numVertices]; // Distancia da origem até o vértice
   int caminho[grafo->numVertices]; // Guarda o id dos vértices anteriores
 
-  checaAtualizacoes(grafo, attAtual);
-  aplicaAlgoritmoDijkstra(grafo, tempo, dist, caminho);
-
-  while (!chegouAoDestino(grafo)) {
-    // Lógica das atualizações
-
-    // Se atualizou {
-      checaAtualizacoes(grafo, attAtual);
-      aplicaAlgoritmoDijkstra(grafo, tempo, dist, caminho);
-    // }
-  }
+  /* Verifica se houve alguma alteraçao de velocidade e aplica o algoritmo de Dijkstra para encontrar o melhor caminho */
+  do {
+    checaAtualizacoes(grafo, attAtual);
+    aplicaAlgoritmoDijkstra(grafo, tempo, dist, caminho);
+  } while(!chegouAoDestino(grafo));
 }
 
 static Item makeItem(Vertice* v, double value) {
