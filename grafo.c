@@ -164,17 +164,21 @@ void aplicaAlgoritmoDijkstra(Grafo* grafo) {
   distancia[grafo->idVerticeOrigem-1]=0;
 
   printf("\n");
-  for(int x=0;x<numVertices;x++) {
+  for(int x=0;x<numVertices-1;x++) {
     int i=distanciaMinima(distancia, visitados, numVertices);
     visitados[i]=1;
     
     for(int j=0;j<numVertices;j++) {
       if(!visitados[j] && getValorDistancia(grafo, i, j) && distancia[i]!=99999999 && distancia[i]+getPesoMatriz(grafo, i, j)<distancia[j]) {
         distancia[j]=distancia[i]+getPesoMatriz(grafo, i, j);
+        pai[j]=i;
       }
     }
   }
 
+  for(int i=0;i<numVertices;i++) {
+    printf("%d ", pai[i]+1);
+  }
   printf("\n");
   for(int i=0;i<numVertices;i++) {
     printf("%.2lf ", distancia[i]*40);
