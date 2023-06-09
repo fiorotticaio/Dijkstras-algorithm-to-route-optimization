@@ -221,7 +221,7 @@ void imprimeResultadoGrafo(Grafo* grafo, FILE* arq) {
   int horas = (int) (grafo->tempoPercorrido/3600);
   int minutos = (int) ((grafo->tempoPercorrido - horas*3600)/60);
   double segundos = grafo->tempoPercorrido - horas*3600 - minutos*60;
-  fprintf(arq, "%02d:%02d:%lf\n", horas, minutos, segundos);
+  fprintf(arq, "%02d:%02d:%.15lf\n", horas, minutos, segundos);
 }
 
 Grafo *inicializaGrafo(
