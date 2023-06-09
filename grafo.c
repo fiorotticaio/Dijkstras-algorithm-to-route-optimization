@@ -10,6 +10,7 @@ struct grafo {
   double tempoPercorrido;
   double distanciaPercorrida;
   int* idVerticesPercorridos;
+  int numVerticesPercorridos;
 };
 
 /* Função auxiliar da leitura do grafa, que verifica se um vértice já foi lido */
@@ -80,7 +81,7 @@ void calculaMelhorRotaGrafo(Grafo* grafo, FILE* arquivoEntrada) {
   int prev[grafo->numVertices]; // Guarda o id dos vértices anteriores
 
   aplicaAlgoritmoDijkstra(grafo, dist, prev);
-  exit(0);
+  return;
 
   while (!chegouAoDestino(grafo)) {
     if (!feof(arquivoEntrada)) {
@@ -101,37 +102,62 @@ static Item makeItem(Vertice* v, double value) {
   return item;
 }
 
+static void percorreUmVerticeGrafo(Grafo* grafo, int idVertice) {
+  // grafo->tempoPercorrido += 
+  // grafo->distanciaPercorrida += 
+  grafo->idVerticesPercorridos[grafo->numVerticesPercorridos] = idVertice;
+  grafo->numVerticesPercorridos++;
+}
+
 void aplicaAlgoritmoDijkstra(Grafo* grafo, double* dist, int* prev) {
-  Pq* pq = PQ_init(grafo->numVertices); // Inicializa a fila de prioridade
+  Pq* pQueue = PQ_init(grafo->numVertices); // Inicializa a fila de prioridade
+
+  dist[grafo->idVerticeOrigem-1] = 0.0; // Distância da origem até a origem é 0
+  prev[grafo->idVerticeOrigem-1] = UNDEFINED; // Vértice anterior não existe
 
   int i = 0;
   for (i = 0; i < grafo->numVertices; i++) {
-    dist[i] = INFINITY; // Distância da origem até o vértice é infinito
-    prev[i] = UNDEFINED; // Vértice anterior não existe
-    PQ_insert(pq, makeItem(grafo->vertices[i], dist[i])); // Insere o vértice na fila de prioridade
+    if (getIdVertice(grafo->vertices[i]) != grafo->idVerticeOrigem) {
+      dist[i] = INFINITY; // Distância da origem até o vértice é infinito
+      prev[i] = UNDEFINED; // Vértice anterior não existe
+    }
+    PQ_insert(pQueue, makeItem(grafo->vertices[i], dist[i])); // Insere o vértice na fila de prioridade
   }
-  dist[grafo->idVerticeOrigem-1] = 0.0; // Distância da origem até a origem é 0
 
+  imprimePq(pQueue); // Debug
 
-  while (!PQ_empty(pq)) {
-    Item item = PQ_min(pq);
+  /* Pra incrementar ao grafo depois */
+  double pesoArestas[grafo->numArestas];
+  double distArestas[grafo->numArestas];
+
+  while (!PQ_empty(pQueue)) {
+    Item item = PQ_delmin(pQueue);
     printf("id: %d, value: %lf\n", id(item), value(item));
+    
     Vertice* u = grafo->vertices[id(item)-1];
+    printf("del mim: Vertice u com id: %d\n", getIdVertice(u));
 
     for (i = 0; i < getNumVizinhosVertice(u); i++) {
       Aresta* a = grafo->arestas[getIdArestasVizinhasVertice(u)[i]];
       Vertice* v = getVerticeDestinoAresta(a);
-      double alt = dist[getIdVertice(u)-1] + getPesoAresta(a);
+      printf("Vertice v (destino da aresta) com id: %d\n", getIdVertice(v));
 
+      double alt = dist[getIdVertice(u)-1] + getPesoAresta(a);
+      printf("dist[getIdVertice(u)-1] = %.5lf + getPesoAresta(a) = %.5lf\n", dist[getIdVertice(u)-1], getPesoAresta(a));
+      printf("alt: %lf\n", alt);
+
+
+      printf("alt = %.5lf < dist[getIdVertice(v)-1] = %.5lf\n\n", alt, dist[getIdVertice(v)-1]);
       if (alt < dist[getIdVertice(v)-1]) {
         dist[getIdVertice(v)-1] = alt;
-        prev[getIdVertice(v)-1] = getIdVertice(u)-1;
-        PQ_decrease_key(pq, getIdVertice(v)-1, alt);
+        prev[getIdVertice(v)-1] = getIdVertice(u);
+        PQ_decrease_key(pQueue, getIdVertice(v), alt);
       }
     }
   }
 
-  PQ_finish(pq);
+  imprimePq(pQueue); // Debug
+  PQ_finish(pQueue);
 
   for (i = 0; i < grafo->numVertices; i++) {
     printf("%lf ", dist[i]);
@@ -141,6 +167,23 @@ void aplicaAlgoritmoDijkstra(Grafo* grafo, double* dist, int* prev) {
   for (i = 0; i < grafo->numVertices; i++) {
     printf("%d ", prev[i]);
   }
+  printf("\n");
+
+  /* Determina o próximo vértice do melhor caminho */
+  int proximoVertice = grafo->idVerticeDestino;
+  int ant = proximoVertice;
+  while (prev[proximoVertice-1] != UNDEFINED) {
+    printf("%d ", proximoVertice);
+    ant = proximoVertice;
+    proximoVertice = prev[proximoVertice-1];
+  }
+  printf("\n");
+
+  printf("prox: %d\n", ant);
+
+  percorreUmVerticeGrafo(grafo, ant);
+  
+
   printf("\n");
 
   /*
@@ -185,6 +228,7 @@ Grafo *inicializaGrafo(
   g->tempoPercorrido = 0.0;
   g->distanciaPercorrida = 0.0;
   g->idVerticesPercorridos = (int*) calloc(numVertices, sizeof(int)); // Começa alocando com o número máximo de vértices
+  g->numVerticesPercorridos = 0;
   return g;
 }
 
