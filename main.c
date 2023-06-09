@@ -22,17 +22,21 @@ int main(int argc, char** argv) {
     printf("Erro ao abrir arquivo de entrada em %s\n", argv[1]);
     exit(1);
   }
-
   Grafo* grafo = leGrafo(arquivoEntrada);
-  // imprimeGrafo(grafo); // Debug
-
 
   /*============ Aplicação do algoritmo de Dijkstra ============*/
   calculaMelhorRotaGrafo(grafo, arquivoEntrada);
-  
+
+  FILE* arquivoSaida = fopen(argv[2], "w");
+  if (!arquivoSaida) {
+    printf("Erro ao abrir arquivo de saída em %s\n", argv[2]);
+    exit(1);
+  }
+  imprimeResultadoGrafo(grafo, arquivoSaida);
 
   /*============ Liberação de memória ============*/
   fclose(arquivoEntrada);
+  fclose(arquivoSaida);
   destroiGrafo(grafo);
 
   return 0;
