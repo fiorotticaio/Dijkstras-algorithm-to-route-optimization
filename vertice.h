@@ -17,7 +17,7 @@ void adicionaArestaVizinha(Vertice* v, int id);
 /// @param v 
 void destroiVertice(Vertice* v);
 
-/// @brief Imprime um vertice
+/// @brief Utilizado para Debuging, Imprime um vertice
 /// @param v 
 void imprimeVertice(Vertice* v);
 
@@ -26,8 +26,14 @@ void imprimeVertice(Vertice* v);
 /// @return id do vertice
 int getIdVertice(Vertice* v);
 
+/// @brief Retorna o numero de vizinhos de um vértice
+/// @param v 
+/// @return numero de vizinhos de um vértice
 int getNumVizinhosVertice(Vertice* v);
 
+/// @brief Retorna o vetor de IDs de arestas vizinhas de um vértice
+/// @param v 
+/// @return IDs de arestas vizinhas de um vertice 
 int* getIdArestasVizinhasVertice(Vertice* v);
 
 #endif // VERTICE_H
