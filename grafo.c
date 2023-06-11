@@ -260,6 +260,10 @@ void destroiGrafo(Grafo *g) {
   for (i = 0; i < g->numArestas; i++) {
     destroiAresta(g->arestas[i]);
   }
+  for(i = 0; i <g->numAtualizacoes; i++){
+    free(g->atualizacoes[i]);
+  }
+  free(g->atualizacoes);
   free(g->arestas);
   free(g->idVerticesPercorridos);
   free(g); 
