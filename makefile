@@ -13,7 +13,7 @@ DIR_RESP_1=./saida-esperada/saida10.csv
 DIR_RESP_2=./saida-esperada/saida50.csv
 DIR_RESP_3=./saida-esperada/saida100.csv
 
-all: clean compile runAll valAll # diffAll 
+all: clean compile runAll diffAll  # valAll
 
 compile: vertice aresta PQ grafo atualizacao
 	@ gcc -o trab2 vertice.o aresta.o PQ.o grafo.o atualizacao.o main.c
@@ -61,6 +61,10 @@ val3: clean compile
 
 valAll: val0 val1 val2 val3
 
+diff0: clean compile
+	@ ./trab2 ${DIR_ENTRADA_0} ${DIR_SAIDA_0}
+	@ diff ${DIR_SAIDA_0} ${DIR_RESP_0}
+
 diff1: clean compile
 	@ ./trab2 ${DIR_ENTRADA_1} ${DIR_SAIDA_1}
 	@ diff ${DIR_SAIDA_1} ${DIR_RESP_1}
@@ -73,7 +77,7 @@ diff3: clean compile
 	@ ./trab2 ${DIR_ENTRADA_3} ${DIR_SAIDA_3}
 	diff ${DIR_SAIDA_3} ${DIR_RESP_3}
 
-diffAll: diff1 diff2 diff3
+diffAll: diff0 diff1 diff2 diff3
 
 clean:
 	@ rm -f *.o trab2
