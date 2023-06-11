@@ -23,5 +23,3 @@ int retornaIdVerticeOrigemAtualizacao(Atualizacao* att) { return att->idVerticeO
 int retornaIdVerticeDestinoAtualizacao(Atualizacao* att) { return att->idVerticeDestino; }
 
 double retornaVelMediaAtualizacao(Atualizacao* att) { return att->velMedia; }
-
-

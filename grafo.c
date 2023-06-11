@@ -71,8 +71,8 @@ Grafo* leGrafo(FILE* arquivoEntrada) {
     arestas[i] = a;
   }
 
-  double instanteTempo, dist;
-  int idVerticeOrigemMudanca, idVerticeDestinoMudanca;
+  double instanteTempo = 0.0, dist = 0.0;
+  int idVerticeOrigemMudanca = 0, idVerticeDestinoMudanca = 0;
 
   /* Essa parte serve para calcular quantas alteraçoes de tempo serão feitas no código */
   long saved = ftell(arquivoEntrada);
