@@ -1,19 +1,16 @@
-DIR_ENTRADA_0=./entrada/entrada7.csv
-DIR_ENTRADA_1=./entrada/entrada10.csv
-DIR_ENTRADA_2=./entrada/entrada50.csv
-DIR_ENTRADA_3=./entrada/entrada100.csv
+DIR_ENTRADA_1=./entrada/in10.csv
+DIR_ENTRADA_2=./entrada/in50.csv
+DIR_ENTRADA_3=./entrada/in100.csv
 
-DIR_SAIDA_0=./saida/saida7.csv
-DIR_SAIDA_1=./saida/saida10.csv
-DIR_SAIDA_2=./saida/saida50.csv
-DIR_SAIDA_3=./saida/saida100.csv
+DIR_SAIDA_1=./saida/out-in10.csv
+DIR_SAIDA_2=./saida/out-in50.csv
+DIR_SAIDA_3=./saida/out-in100.csv
 
-DIR_RESP_0=./saida-esperada/saida7.csv
-DIR_RESP_1=./saida-esperada/saida10.csv
-DIR_RESP_2=./saida-esperada/saida50.csv
-DIR_RESP_3=./saida-esperada/saida100.csv
+DIR_RESP_1=./saida-esperada/out-in10.csv
+DIR_RESP_2=./saida-esperada/out-in50.csv
+DIR_RESP_3=./saida-esperada/out-in100.csv
 
-all: clean compile runAll diffAll  # valAll
+all: clean compile run diff
 
 compile: vertice aresta PQ grafo atualizacao
 	@ gcc -o trab2 vertice.o aresta.o PQ.o grafo.o atualizacao.o main.c
@@ -32,9 +29,10 @@ atualizacao:
 
 grafo:
 	@ gcc -c grafo.c
+	
 
-run0: clean compile
-	@ ./trab2 ${DIR_ENTRADA_0} ${DIR_SAIDA_0}
+run: clean compile
+	@ ./trab2 ./entrada/in100000.csv ./saida/out-in100000.csv
 
 run1: clean compile
 	@ ./trab2 ${DIR_ENTRADA_1} ${DIR_SAIDA_1}
@@ -47,8 +45,9 @@ run3: clean compile
 
 runAll: run0 run1 run2 run3
 
-val0: clean compile
-	@ valgrind --leak-check=full ./trab2 ${DIR_ENTRADA_0} ${DIR_SAIDA_0}
+
+val: clean compile
+	@ valgrind --leak-check=full ./trab2 ./entrada/in100000.csv ./saida/out-in100000.csv
 
 val1: clean compile
 	@ valgrind --leak-check=full ./trab2 ${DIR_ENTRADA_1} ${DIR_SAIDA_1}
@@ -61,9 +60,9 @@ val3: clean compile
 
 valAll: val0 val1 val2 val3
 
-diff0: clean compile
-	@ ./trab2 ${DIR_ENTRADA_0} ${DIR_SAIDA_0}
-	@ diff ${DIR_SAIDA_0} ${DIR_RESP_0}
+
+diff:
+	diff ./saida/out-in100000.csv ./saida-esperada/out-in100000.csv
 
 diff1: clean compile
 	@ ./trab2 ${DIR_ENTRADA_1} ${DIR_SAIDA_1}
@@ -78,6 +77,7 @@ diff3: clean compile
 	diff ${DIR_SAIDA_3} ${DIR_RESP_3}
 
 diffAll: diff0 diff1 diff2 diff3
+
 
 clean:
 	@ rm -f *.o trab2
