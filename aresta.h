@@ -29,6 +29,8 @@ void destroiAresta(Aresta* a);
 /// @param a 
 void imprimeAresta(Aresta* a);
 
+int getIdAresta(Aresta* a);
+
 /// @brief Retorna o vertice de origem de uma aresta
 /// @param a 
 /// @return Vértice de origem
@@ -63,5 +65,7 @@ void setVelMediaAresta(Aresta* a, double velMedia);
 /// @param a 
 /// @param peso 
 void setPesoAresta(Aresta* a, double peso);
+
+void ordenaArestas(Aresta** arestas, int numArestas);
 
 #endif // ARESTA_H

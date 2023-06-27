@@ -42,6 +42,8 @@ Vertice* getVerticeOrigemAresta(Aresta* a) { return a->vOrigem; }
 
 Vertice* getVerticeDestinoAresta(Aresta* a) { return a->vDestino; }
 
+int getIdAresta(Aresta* a) { return a->id; }
+
 double getDistAresta(Aresta* a) { return a->dist; }
 
 double getVelMediaAresta(Aresta* a) { return a->velMedia; }
@@ -54,3 +56,18 @@ void setVelMediaAresta(Aresta* a, double velMedia) {
 }
 
 void setPesoAresta(Aresta* a, double peso) { a->peso = peso; }
+
+static int comparaArestas(const void* a, const void* b) {
+  /* Função de comparação para o qsort */
+  Aresta* arestaA = *(Aresta**) a;
+  Aresta* arestaB = *(Aresta**) b;
+  if (getIdVertice(arestaA->vOrigem) == getIdVertice(arestaB->vOrigem)) 
+    return (getIdVertice(arestaA->vDestino) - getIdVertice(arestaB->vDestino));
+  else 
+    return (getIdVertice(arestaA->vOrigem) - getIdVertice(arestaB->vOrigem)); 
+}
+
+void ordenaArestas(Aresta** arestas, int numArestas) {
+  /* Utiliza o qsort para ordenar as arestas pelo id do vértice de origem */
+  qsort(arestas, numArestas, sizeof(Aresta*), comparaArestas);
+}
