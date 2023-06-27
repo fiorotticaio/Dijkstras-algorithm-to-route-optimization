@@ -3,6 +3,7 @@
 struct grafo {
   Vertice** vertices;
   Aresta** arestas;
+  Aresta** arestasOrdenadas;
   Atualizacao** atualizacoes; 
   int numVertices;
   int numArestas;
@@ -38,6 +39,7 @@ Grafo* leGrafo(FILE* arquivoEntrada) {
 
   /* Criando o vetor de arestas */
   Aresta** arestas = (Aresta**) calloc(numArestas, sizeof(Aresta*));
+  Aresta** arestasOrdenadas = (Aresta**) calloc(numArestas, sizeof(Aresta*));
 
   int i = 0;
   for (i = 0; i < numArestas; i++) {
@@ -64,12 +66,16 @@ Grafo* leGrafo(FILE* arquivoEntrada) {
     }
 
     Aresta* a = inicializaAresta(i, vOrigem, vDestino, dist, velMedia);
+    Aresta* aOrd = inicializaAresta(i, vOrigem, vDestino, dist, velMedia);
 
     adicionaArestaVizinha(vOrigem, i); // Adicionando o id da aresta no vetor de arestas vizinhas do vértice de origem
 
     /* Adicionando a aresta no vetor, conforme elas aparecem no arquivo */
     arestas[i] = a;
+    arestasOrdenadas[i] = aOrd;
   }
+  
+  ordenaArestas(arestasOrdenadas, numArestas); // Ordena as arestas para ajudar na busca (binária)
 
   double instanteTempo = 0.0, dist = 0.0;
   int idVerticeOrigemMudanca = 0, idVerticeDestinoMudanca = 0;
@@ -91,18 +97,52 @@ Grafo* leGrafo(FILE* arquivoEntrada) {
     att[i]=inicializaAtualizacao(instanteTempo, idVerticeOrigemMudanca, idVerticeDestinoMudanca, dist);
   }
   
-  return inicializaGrafo(vertices, arestas, numVertices, numArestas, idVerticeOrigem, idVerticeDestino, att, count);
+  return inicializaGrafo(vertices, arestas, arestasOrdenadas, numVertices, numArestas, idVerticeOrigem, idVerticeDestino, att, count);
+}
+
+static int encontraIdAresta(Grafo* grafo, int idVerticeOrigem, int idVerticeDestino) {
+  /* Faz uma busca binária para encontrar a aresta a ser atualizada */
+  int i = 0;
+  int j = grafo->numArestas - 1;
+  int meio = 0;
+  while (i <= j) {
+    meio = i + ((j - i) / 2);
+    Aresta* a = grafo->arestasOrdenadas[meio];
+    if (
+        getIdVertice(getVerticeOrigemAresta(a)) == idVerticeOrigem && 
+        getIdVertice(getVerticeDestinoAresta(a)) == idVerticeDestino
+    ) {
+      return getIdAresta(a);
+    } else if (idVerticeOrigem < getIdVertice(getVerticeOrigemAresta(a))) {
+      j = meio - 1;
+    } else if (idVerticeOrigem == getIdVertice(getVerticeOrigemAresta(a))) {
+      if (idVerticeDestino < getIdVertice(getVerticeDestinoAresta(a))) {
+        j = meio - 1;
+      } else {
+        i = meio + 1;
+      }
+    } else {
+      i = meio + 1;
+    }
+  }
+  return -1;
 }
 
 /* Funçao que verifica se alguma alteraçao foi feita no momento atual do percurso */
-void checaAtualizacoes(Grafo* grafo, int attAtual) {
-  for(int i=attAtual;i<grafo->numAtualizacoes;i++) {
-    if(grafo->tempoPercorrido>retornaTempoAtualizacao(grafo->atualizacoes[i])) {
-      recalculaPesosGrafo(grafo, retornaIdVerticeOrigemAtualizacao(grafo->atualizacoes[i]), retornaIdVerticeDestinoAtualizacao(grafo->atualizacoes[i]), retornaVelMediaAtualizacao(grafo->atualizacoes[i]));
-      attAtual++;    
+int checaAtualizacoes(Grafo* grafo, int attAtual) {
+  int i = 0;
+  for(i = attAtual; i < grafo->numAtualizacoes; i++) {
+    if(grafo->tempoPercorrido > retornaTempoAtualizacao(grafo->atualizacoes[i])) {
+      int idAresta = encontraIdAresta(grafo,
+                                      retornaIdVerticeOrigemAtualizacao(grafo->atualizacoes[i]),
+                                      retornaIdVerticeDestinoAtualizacao(grafo->atualizacoes[i])
+                                    );
+      recalculaPesosGrafo(grafo, idAresta, retornaVelMediaAtualizacao(grafo->atualizacoes[i]));
+      attAtual++;
     }
-    else {break;}
+    else { break; }
   }
+  return attAtual;
 }
 
 void calculaMelhorRotaGrafo(Grafo* grafo, FILE* arquivoEntrada) {
@@ -116,7 +156,7 @@ void calculaMelhorRotaGrafo(Grafo* grafo, FILE* arquivoEntrada) {
 
   /* Verifica se houve alguma alteraçao de velocidade e aplica o algoritmo de Dijkstra para encontrar o melhor caminho */
   do {
-    checaAtualizacoes(grafo, attAtual);
+    attAtual = checaAtualizacoes(grafo, attAtual);
     aplicaAlgoritmoDijkstra(grafo, tempo, dist, caminho);
   } while(!chegouAoDestino(grafo));
 }
@@ -189,17 +229,9 @@ void aplicaAlgoritmoDijkstra(Grafo* grafo, double* tempo, double* dist, int* cam
 
 int chegouAoDestino(Grafo* grafo) { return grafo->idVerticeOrigem == grafo->idVerticeDestino; }
 
-void recalculaPesosGrafo(Grafo* grafo, int idVerticeOrigem, int idVerticeDestino, double velMedia) {
-  int i = 0;
-  for (i = 0; i < grafo->numArestas; i++) { // Encontrar a aresta a ser atualizada
-    Aresta* a = grafo->arestas[i];
-    if (
-        getIdVertice(getVerticeOrigemAresta(a)) == idVerticeOrigem && 
-        getIdVertice(getVerticeDestinoAresta(a)) == idVerticeDestino
-    ) {
-      setVelMediaAresta(a, velMedia); // Atualiza a velocidade média da aresta 
-    }
-  }
+void recalculaPesosGrafo(Grafo* grafo, int idAresta, double velMedia) {  
+  Aresta* a = grafo->arestas[idAresta];
+  setVelMediaAresta(a, velMedia); // Atualiza a velocidade média da aresta
 }
 
 void imprimeResultadoGrafo(Grafo* grafo, FILE* arq) {
@@ -209,7 +241,6 @@ void imprimeResultadoGrafo(Grafo* grafo, FILE* arq) {
     fprintf(arq, "%d", grafo->idVerticesPercorridos[i]);
     if (i != grafo->numVerticesPercorridos-1) fprintf(arq, ";");
   }
-  printf("\n");
 
   /* Imprimindo a distância (em km) de percurso */
   fprintf(arq, "\n%lf\n", (grafo->distanciaPercorrida)/1000);
@@ -224,6 +255,7 @@ void imprimeResultadoGrafo(Grafo* grafo, FILE* arq) {
 Grafo *inicializaGrafo(
   Vertice** v,
   Aresta** a,
+  Aresta** aOrd,
   int numVertices,
   int numArestas,
   int idVerticeOrigem,
@@ -234,6 +266,7 @@ Grafo *inicializaGrafo(
   Grafo* g = (Grafo*) malloc(sizeof(Grafo));
   g->vertices = v;
   g->arestas = a;
+  g->arestasOrdenadas = aOrd;
   g->numVertices = numVertices;
   g->numArestas = numArestas;
   g->idVerticeOrigem = idVerticeOrigem;
@@ -259,12 +292,14 @@ void destroiGrafo(Grafo *g) {
   free(g->vertices);
   for (i = 0; i < g->numArestas; i++) {
     destroiAresta(g->arestas[i]);
+    destroiAresta(g->arestasOrdenadas[i]);
   }
+  free(g->arestas);
+  free(g->arestasOrdenadas);
   for(i = 0; i <g->numAtualizacoes; i++){
     free(g->atualizacoes[i]);
   }
   free(g->atualizacoes);
-  free(g->arestas);
   free(g->idVerticesPercorridos);
   free(g); 
 }

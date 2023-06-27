@@ -22,7 +22,8 @@ Grafo* leGrafo(FILE* arquivoEntrada);
 /// @brief verifica se há uma atualização não tratada
 /// @param grafo 
 /// @param attAtual 
-void checaAtualizacoes(Grafo* grafo, int attAtual);
+/// @return número da próxima ataualização não tratada
+int checaAtualizacoes(Grafo* grafo, int attAtual);
 
 /// @brief Calcula a melhor rota de um grafo
 /// @param grafo 
@@ -46,7 +47,7 @@ int chegouAoDestino(Grafo* grafo);
 /// @param idVerticeOrigem 
 /// @param idVerticeDestino 
 /// @param velMedia 
-void recalculaPesosGrafo(Grafo* grafo, int idVerticeOrigem, int idVerticeDestino, double velMedia);
+void recalculaPesosGrafo(Grafo* grafo, int idAresta, double velMedia);
 
 /// @brief Imprime a saída do programa
 /// @param grafo 
@@ -56,10 +57,11 @@ void imprimeResultadoGrafo(Grafo* grafo, FILE* arq);
 /// @brief Inicializa um grafo
 /// @param v 
 /// @param a 
+/// @param aOrd
 /// @param nVertices 
 /// @param nArestas 
 /// @return Ponteiro para o grafo inicializado
-Grafo* inicializaGrafo(Vertice** v, Aresta** a, int numVertices, int numArestas, int idVerticeOrigem, int idVerticeDestino, Atualizacao** att, int count);
+Grafo* inicializaGrafo(Vertice** v, Aresta** a, Aresta** aOrd, int numVertices, int numArestas, int idVerticeOrigem, int idVerticeDestino, Atualizacao** att, int count);
 
 /// @brief Libera a memoria alocada para um grafo
 /// @param g 
